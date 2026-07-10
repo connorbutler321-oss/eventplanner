@@ -1,0 +1,77 @@
+@import "tailwindcss";
+
+:root {
+  /* Lipscomb University brand palette (official: Purple #331E54, Gold #F4AA00) */
+  --lu-purple-900: #1f1338;
+  --lu-purple-800: #291a47;
+  --lu-purple-700: #2e1d50;
+  --lu-purple-600: #331e54; /* primary — official Lipscomb Purple */
+  --lu-purple-500: #4a3170;
+  --lu-purple-100: #e8e1f0;
+  --lu-purple-50: #f5f2f9;
+
+  --lu-gold-600: #c98c00;
+  --lu-gold-500: #f4aa00; /* accent — official Lipscomb Gold */
+  --lu-gold-400: #f7bc33;
+  --lu-gold-100: #fdefd1;
+
+  --background: #f7f6fa;
+  --foreground: #221b2e;
+
+  --surface: #ffffff;
+  --border: #e3ddef;
+
+  --success: #1e8e5a;
+  --warning: #c98c00;
+  --danger: #b8452f;
+  --info: #2f6fa8;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-surface: var(--surface);
+  --color-border: var(--border);
+
+  --color-lu-purple-900: var(--lu-purple-900);
+  --color-lu-purple-800: var(--lu-purple-800);
+  --color-lu-purple-700: var(--lu-purple-700);
+  --color-lu-purple-600: var(--lu-purple-600);
+  --color-lu-purple-500: var(--lu-purple-500);
+  --color-lu-purple-100: var(--lu-purple-100);
+  --color-lu-purple-50: var(--lu-purple-50);
+
+  --color-lu-gold-600: var(--lu-gold-600);
+  --color-lu-gold-500: var(--lu-gold-500);
+  --color-lu-gold-400: var(--lu-gold-400);
+  --color-lu-gold-100: var(--lu-gold-100);
+
+  --color-success: var(--success);
+  --color-warning: var(--warning);
+  --color-danger: var(--danger);
+  --color-info: var(--info);
+
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans), Arial, Helvetica, sans-serif;
+}
+
+@keyframes ef-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.ef-fade-in {
+  animation: ef-fade-in 0.2s ease-out;
+}
