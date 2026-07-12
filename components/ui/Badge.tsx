@@ -2,13 +2,13 @@ import { cn } from "@/lib/cn";
 import type { EventStatus, RegistrationStatus, SpaceStatus } from "@/lib/types";
 
 const toneClasses: Record<string, string> = {
-  neutral: "bg-gray-100 text-gray-700",
-  purple: "bg-lu-purple-100 text-lu-purple-700",
-  gold: "bg-lu-gold-100 text-lu-gold-600",
-  success: "bg-green-100 text-success",
-  warning: "bg-amber-100 text-warning",
-  danger: "bg-red-100 text-danger",
-  info: "bg-blue-100 text-info",
+  neutral: "bg-gray-100 text-gray-700 ring-1 ring-inset ring-gray-500/15",
+  purple: "bg-lu-purple-100 text-lu-purple-700 ring-1 ring-inset ring-lu-purple-500/20",
+  gold: "bg-lu-gold-100 text-lu-gold-600 ring-1 ring-inset ring-lu-gold-500/25",
+  success: "bg-green-100 text-success ring-1 ring-inset ring-success/20",
+  warning: "bg-amber-100 text-warning ring-1 ring-inset ring-warning/20",
+  danger: "bg-red-100 text-danger ring-1 ring-inset ring-danger/20",
+  info: "bg-blue-100 text-info ring-1 ring-inset ring-info/20",
 };
 
 export function Badge({

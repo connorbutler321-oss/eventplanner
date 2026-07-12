@@ -2,48 +2,73 @@
 
 :root {
   /* Lipscomb University brand palette (official: Purple #331E54, Gold #F4AA00) */
+  --lu-purple-950: #150c26;
   --lu-purple-900: #1f1338;
   --lu-purple-800: #291a47;
   --lu-purple-700: #2e1d50;
   --lu-purple-600: #331e54; /* primary — official Lipscomb Purple */
   --lu-purple-500: #4a3170;
+  --lu-purple-400: #6b4f97;
+  --lu-purple-300: #9a83bd;
+  --lu-purple-200: #c7b8dd;
   --lu-purple-100: #e8e1f0;
   --lu-purple-50: #f5f2f9;
 
   --lu-gold-600: #c98c00;
   --lu-gold-500: #f4aa00; /* accent — official Lipscomb Gold */
   --lu-gold-400: #f7bc33;
+  --lu-gold-300: #f9cd66;
   --lu-gold-100: #fdefd1;
 
-  --background: #f7f6fa;
-  --foreground: #221b2e;
+  --background: #f6f5fa;
+  --foreground: #1c1626;
+  --muted-foreground: #6b6577;
 
   --surface: #ffffff;
-  --border: #e3ddef;
+  --surface-muted: #faf9fc;
+  --border: #e7e2f0;
+  --border-strong: #d8d0e6;
+  --ring: #6b4f97;
 
   --success: #1e8e5a;
   --warning: #c98c00;
   --danger: #b8452f;
   --info: #2f6fa8;
+
+  /* Elevation — soft, brand-tinted shadows for a modern, layered feel */
+  --elevation-xs: 0 1px 2px 0 rgb(31 19 56 / 0.05);
+  --elevation-sm: 0 1px 2px -1px rgb(31 19 56 / 0.08), 0 1px 3px 0 rgb(31 19 56 / 0.05);
+  --elevation-md: 0 2px 4px -2px rgb(31 19 56 / 0.08), 0 6px 16px -4px rgb(31 19 56 / 0.10);
+  --elevation-lg: 0 10px 30px -8px rgb(31 19 56 / 0.18), 0 4px 8px -4px rgb(31 19 56 / 0.08);
+  --elevation-xl: 0 24px 48px -12px rgb(31 19 56 / 0.24);
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+  --color-muted-foreground: var(--muted-foreground);
   --color-surface: var(--surface);
+  --color-surface-muted: var(--surface-muted);
   --color-border: var(--border);
+  --color-border-strong: var(--border-strong);
+  --color-ring: var(--ring);
 
+  --color-lu-purple-950: var(--lu-purple-950);
   --color-lu-purple-900: var(--lu-purple-900);
   --color-lu-purple-800: var(--lu-purple-800);
   --color-lu-purple-700: var(--lu-purple-700);
   --color-lu-purple-600: var(--lu-purple-600);
   --color-lu-purple-500: var(--lu-purple-500);
+  --color-lu-purple-400: var(--lu-purple-400);
+  --color-lu-purple-300: var(--lu-purple-300);
+  --color-lu-purple-200: var(--lu-purple-200);
   --color-lu-purple-100: var(--lu-purple-100);
   --color-lu-purple-50: var(--lu-purple-50);
 
   --color-lu-gold-600: var(--lu-gold-600);
   --color-lu-gold-500: var(--lu-gold-500);
   --color-lu-gold-400: var(--lu-gold-400);
+  --color-lu-gold-300: var(--lu-gold-300);
   --color-lu-gold-100: var(--lu-gold-100);
 
   --color-success: var(--success);
@@ -51,20 +76,65 @@
   --color-danger: var(--danger);
   --color-info: var(--info);
 
+  /* Override default Tailwind elevation so every existing shadow-* utility
+     across the app picks up the refined, brand-tinted values automatically. */
+  --shadow-xs: var(--elevation-xs);
+  --shadow-sm: var(--elevation-sm);
+  --shadow-md: var(--elevation-md);
+  --shadow-lg: var(--elevation-lg);
+  --shadow-xl: var(--elevation-xl);
+
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
 
 body {
-  background: var(--background);
+  min-height: 100vh;
+  background:
+    radial-gradient(1100px 560px at 100% -8%, rgb(244 170 0 / 0.05), transparent 58%),
+    radial-gradient(900px 480px at -8% -4%, rgb(51 30 84 / 0.06), transparent 55%),
+    var(--background);
+  background-attachment: fixed;
   color: var(--foreground);
   font-family: var(--font-sans), Arial, Helvetica, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+/* Tighter, more confident headings for a polished, editorial feel */
+@layer base {
+  h1,
+  h2,
+  h3 {
+    letter-spacing: -0.02em;
+  }
+}
+
+/* Refined, unobtrusive scrollbars */
+@layer base {
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: var(--border-strong) transparent;
+  }
+  *::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+  *::-webkit-scrollbar-thumb {
+    background-color: var(--border-strong);
+    border-radius: 9999px;
+    border: 3px solid transparent;
+    background-clip: content-box;
+  }
+  *::-webkit-scrollbar-thumb:hover {
+    background-color: var(--lu-purple-300);
+  }
 }
 
 @keyframes ef-fade-in {
   from {
     opacity: 0;
-    transform: translateY(4px);
+    transform: translateY(6px);
   }
   to {
     opacity: 1;
@@ -73,5 +143,11 @@ body {
 }
 
 .ef-fade-in {
-  animation: ef-fade-in 0.2s ease-out;
+  animation: ef-fade-in 0.28s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* Subtle glass effect for sticky headers */
+.ef-glass {
+  background-color: color-mix(in srgb, var(--surface) 82%, transparent);
+  backdrop-filter: saturate(1.4) blur(10px);
 }
