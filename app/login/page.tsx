@@ -19,21 +19,21 @@ export default function LoginPage() {
 
         <Card className="ef-fade-in shadow-xl">
           <CardBody className="p-6 md:p-7">
-            <h2 className="mb-5 text-lg font-semibold text-lu-purple-900">Sign in</h2>
+            <h2 className="mb-5 text-lg font-semibold text-heading">Sign in</h2>
             <LoginForm />
           </CardBody>
         </Card>
 
-        <Card className="mt-4 border-lu-gold-400/40 bg-lu-purple-50/90">
-          <CardBody className="p-4 text-xs text-lu-purple-800">
-            <p className="mb-2 font-semibold">Demo accounts (password: password123)</p>
+        <Card className="mt-4 bg-surface-muted">
+          <CardBody className="p-4 text-xs text-foreground">
+            <p className="mb-2 font-semibold text-heading">Demo accounts (password: password123)</p>
             <ul className="space-y-1">
               <li>admin@lipscomb.edu — Admin</li>
               <li>planner@lipscomb.edu — Event Planner</li>
               <li>staff@lipscomb.edu — Staff</li>
               <li>vendor@lipscomb.edu — Vendor (Lee&apos;s BBQ Co.)</li>
             </ul>
-            <p className="mt-2 text-lu-purple-500">
+            <p className="mt-2 text-muted-foreground">
               After your first sign-in, this device will offer a quick PIN unlock instead.
             </p>
           </CardBody>

@@ -9,11 +9,11 @@ const base =
 
 const variants: Record<Variant, string> = {
   primary:
-    "bg-lu-purple-600 text-white shadow-sm hover:bg-lu-purple-700 hover:shadow-md hover:-translate-y-px",
+    "bg-primary text-on-primary shadow-sm hover:bg-primary-hover hover:shadow-md hover:-translate-y-px",
   gold: "bg-lu-gold-500 text-lu-purple-900 shadow-sm hover:bg-lu-gold-400 hover:shadow-md hover:-translate-y-px",
   secondary:
-    "bg-surface text-lu-purple-700 border border-border-strong hover:bg-lu-purple-50 hover:border-lu-purple-200 shadow-xs hover:shadow-sm",
-  ghost: "bg-transparent text-lu-purple-700 hover:bg-lu-purple-50",
+    "bg-surface text-heading border border-border-strong hover:bg-surface-muted hover:border-ring/40 shadow-xs hover:shadow-sm",
+  ghost: "bg-transparent text-foreground hover:bg-surface-muted",
   danger: "bg-danger text-white shadow-sm hover:opacity-90 hover:shadow-md hover:-translate-y-px",
 };
 

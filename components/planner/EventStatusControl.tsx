@@ -28,7 +28,7 @@ export function EventStatusControl({ eventId, status }: { eventId: string; statu
           </option>
         ))}
       </Select>
-      {pending && <span className="text-xs text-gray-400">Saving…</span>}
+      {pending && <span className="text-xs text-muted-foreground">Saving…</span>}
     </div>
   );
 }

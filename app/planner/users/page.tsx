@@ -17,8 +17,8 @@ export default async function PlannerUsersPage() {
   return (
     <div className="ef-fade-in space-y-6">
       <div>
-        <h1 className="text-2xl font-bold text-lu-purple-900">Users &amp; Access</h1>
-        <p className="mt-1 text-sm text-gray-600">
+        <h1 className="text-2xl font-bold text-heading">Users &amp; Access</h1>
+        <p className="mt-1 text-sm text-muted-foreground">
           Manage staff access levels and PINs. Only admins can see this page.
         </p>
       </div>

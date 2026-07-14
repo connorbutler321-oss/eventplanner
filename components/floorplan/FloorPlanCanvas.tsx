@@ -41,7 +41,7 @@ export function FloorPlanCanvas({
     <svg
       ref={svgRef}
       viewBox={`0 0 ${plan.canvasWidth} ${plan.canvasHeight}`}
-      className={cn("w-full rounded-lg border border-border bg-lu-purple-50/40 touch-none", className)}
+      className={cn("w-full rounded-lg border border-border bg-surface-muted touch-none", className)}
     >
       {plan.backgroundImageUrl && (
         <image
@@ -79,7 +79,7 @@ export function FloorPlanCanvas({
               y={space.h / 2}
               textAnchor="middle"
               dominantBaseline="middle"
-              className="select-none fill-current text-[11px] font-semibold text-gray-700"
+              className="select-none fill-current text-[11px] font-semibold text-foreground"
             >
               {space.label}
             </text>
@@ -88,7 +88,7 @@ export function FloorPlanCanvas({
                 x={space.w / 2}
                 y={space.h / 2 + 14}
                 textAnchor="middle"
-                className="select-none fill-current text-[9px] text-gray-500"
+                className="select-none fill-current text-[9px] text-muted-foreground"
               >
                 ${space.price}
               </text>

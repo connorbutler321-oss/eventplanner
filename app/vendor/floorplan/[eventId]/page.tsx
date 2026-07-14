@@ -18,8 +18,8 @@ export default async function VendorFloorPlanPage({
   return (
     <div className="ef-fade-in">
       <div className="mb-6">
-        <h1 className="text-2xl font-bold text-lu-purple-900">{event.name}</h1>
-        <p className="mt-1 text-sm text-gray-600">Pick an available space on the floor plan below.</p>
+        <h1 className="text-2xl font-bold text-heading">{event.name}</h1>
+        <p className="mt-1 text-sm text-muted-foreground">Pick an available space on the floor plan below.</p>
       </div>
       <Card>
         <CardBody className="p-5">

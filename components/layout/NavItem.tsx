@@ -17,7 +17,7 @@ export function NavItem({
   exact,
 }: {
   href: string;
-  icon: string;
+  icon: React.ReactNode;
   label: string;
   exact?: boolean;
 }) {
@@ -31,10 +31,10 @@ export function NavItem({
       href={href}
       aria-current={active ? "page" : undefined}
       className={cn(
-        "group relative flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-all duration-150",
+        "group relative flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-all duration-150",
         active
-          ? "bg-white/10 text-white shadow-sm"
-          : "text-lu-purple-100 hover:bg-white/5 hover:text-white"
+          ? "bg-sidebar-active text-sidebar-active-fg"
+          : "text-sidebar-fg hover:bg-sidebar-hover hover:text-sidebar-active-fg"
       )}
     >
       {/* active indicator */}
@@ -44,7 +44,14 @@ export function NavItem({
           active ? "opacity-100" : "opacity-0 group-hover:opacity-40"
         )}
       />
-      <span className="text-base opacity-90">{icon}</span>
+      <span
+        className={cn(
+          "flex h-5 w-5 items-center justify-center transition-colors",
+          active ? "text-sidebar-active-icon" : "text-sidebar-fg-muted group-hover:text-sidebar-active-fg"
+        )}
+      >
+        {icon}
+      </span>
       {label}
     </Link>
   );

@@ -1,5 +1,8 @@
 @import "tailwindcss";
 
+/* Enable class-based dark mode (.dark on <html>) */
+@custom-variant dark (&:where(.dark, .dark *));
+
 :root {
   /* Lipscomb University brand palette (official: Purple #331E54, Gold #F4AA00) */
   --lu-purple-950: #150c26;
@@ -20,38 +23,133 @@
   --lu-gold-300: #f9cd66;
   --lu-gold-100: #fdefd1;
 
-  --background: #f6f5fa;
-  --foreground: #1c1626;
-  --muted-foreground: #6b6577;
-
+  /* ---- Semantic tokens · LIGHT theme ("Soft Modern", the default) ---- */
+  --background: #f7f5fb;
   --surface: #ffffff;
-  --surface-muted: #faf9fc;
-  --border: #e7e2f0;
-  --border-strong: #d8d0e6;
-  --ring: #6b4f97;
+  --surface-muted: #faf9fd;
+  --foreground: #2a2338;
+  --heading: #3a2d55;
+  --muted-foreground: #8b8398;
+
+  --border: #ece5f6;
+  --border-strong: #ddd3ee;
+  --ring: #7c5cb0;
+
+  --primary: #4a3170;
+  --primary-hover: #3d2860;
+  --on-primary: #ffffff;
 
   --success: #1e8e5a;
   --warning: #c98c00;
   --danger: #b8452f;
   --info: #2f6fa8;
 
-  /* Elevation — soft, brand-tinted shadows for a modern, layered feel */
-  --elevation-xs: 0 1px 2px 0 rgb(31 19 56 / 0.05);
-  --elevation-sm: 0 1px 2px -1px rgb(31 19 56 / 0.08), 0 1px 3px 0 rgb(31 19 56 / 0.05);
-  --elevation-md: 0 2px 4px -2px rgb(31 19 56 / 0.08), 0 6px 16px -4px rgb(31 19 56 / 0.10);
-  --elevation-lg: 0 10px 30px -8px rgb(31 19 56 / 0.18), 0 4px 8px -4px rgb(31 19 56 / 0.08);
+  /* Sidebar */
+  --sidebar-from: #faf9fd;
+  --sidebar-to: #f2ecfb;
+  --sidebar-fg: #6b6178;
+  --sidebar-fg-muted: #9a92aa;
+  --sidebar-border: #ece5f6;
+  --sidebar-hover-bg: #f0ebf9;
+  --sidebar-active-bg: #efe7fb;
+  --sidebar-active-fg: #4a3170;
+  --sidebar-active-icon: #7c5cb0;
+  --sidebar-logo-from: #8b6dc8;
+  --sidebar-logo-to: #6b4f97;
+  --sidebar-logo-fg: #ffffff;
+
+  /* Topbar */
+  --topbar: rgba(247, 245, 251, 0.8);
+
+  /* Chart series (validated brand-family for light surface) */
+  --chart-1: #6b4f97;
+  --chart-2: #c98c00;
+  --chart-grid: #ece5f6;
+
+  /* Elevation */
+  --elevation-xs: 0 1px 2px 0 rgb(60 42 96 / 0.05);
+  --elevation-sm: 0 1px 2px -1px rgb(60 42 96 / 0.08), 0 2px 6px -2px rgb(60 42 96 / 0.08);
+  --elevation-md: 0 4px 12px -4px rgb(60 42 96 / 0.12), 0 8px 24px -8px rgb(60 42 96 / 0.10);
+  --elevation-lg: 0 12px 32px -8px rgb(60 42 96 / 0.18), 0 4px 10px -4px rgb(60 42 96 / 0.08);
   --elevation-xl: 0 24px 48px -12px rgb(31 19 56 / 0.24);
+}
+
+/* ---- Semantic tokens · DARK theme ("Midnight") ---- */
+.dark {
+  /* Near-neutral charcoal with only a faint cool tint (less purple), and a
+     clear lightness step between canvas and cards so boxes read as surfaces. */
+  --background: #0c0b12;
+  --surface: #1c1a27;
+  --surface-muted: #161420;
+  --foreground: #e8e6ef;
+  --heading: #ffffff;
+  --muted-foreground: #9a92ad;
+
+  --border: #322e3f;
+  --border-strong: #423d51;
+  --ring: #8b6dc8;
+
+  --primary: #7c5cb0;
+  --primary-hover: #8b6dc8;
+  --on-primary: #ffffff;
+
+  --success: #34b37a;
+  --warning: #f0b429;
+  --danger: #e06a52;
+  --info: #4f97d8;
+
+  --sidebar-from: #16141f;
+  --sidebar-to: #0d0c13;
+  --sidebar-fg: #b7b2c4;
+  --sidebar-fg-muted: #8f889e;
+  --sidebar-border: rgba(255, 255, 255, 0.08);
+  --sidebar-hover-bg: rgba(255, 255, 255, 0.05);
+  --sidebar-active-bg: rgba(124, 92, 176, 0.22);
+  --sidebar-active-fg: #ffffff;
+  --sidebar-active-icon: #c9b4ff;
+  --sidebar-logo-from: #f7bc33;
+  --sidebar-logo-to: #f4aa00;
+  --sidebar-logo-fg: #1f1338;
+
+  --topbar: rgba(12, 11, 18, 0.75);
+
+  --chart-1: #a98fd6;
+  --chart-2: #f4aa00;
+  --chart-grid: #322e3f;
+
+  --elevation-xs: 0 1px 2px 0 rgb(0 0 0 / 0.4);
+  --elevation-sm: 0 1px 3px 0 rgb(0 0 0 / 0.5);
+  --elevation-md: 0 6px 20px -6px rgb(0 0 0 / 0.55);
+  --elevation-lg: 0 14px 36px -10px rgb(0 0 0 / 0.6);
+  --elevation-xl: 0 24px 48px -12px rgb(0 0 0 / 0.7);
 }
 
 @theme inline {
   --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --color-muted-foreground: var(--muted-foreground);
   --color-surface: var(--surface);
   --color-surface-muted: var(--surface-muted);
+  --color-foreground: var(--foreground);
+  --color-heading: var(--heading);
+  --color-muted-foreground: var(--muted-foreground);
+
   --color-border: var(--border);
   --color-border-strong: var(--border-strong);
   --color-ring: var(--ring);
+
+  --color-primary: var(--primary);
+  --color-primary-hover: var(--primary-hover);
+  --color-on-primary: var(--on-primary);
+
+  --color-sidebar-fg: var(--sidebar-fg);
+  --color-sidebar-fg-muted: var(--sidebar-fg-muted);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-hover: var(--sidebar-hover-bg);
+  --color-sidebar-active: var(--sidebar-active-bg);
+  --color-sidebar-active-fg: var(--sidebar-active-fg);
+  --color-sidebar-active-icon: var(--sidebar-active-icon);
+
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
 
   --color-lu-purple-950: var(--lu-purple-950);
   --color-lu-purple-900: var(--lu-purple-900);
@@ -76,13 +174,14 @@
   --color-danger: var(--danger);
   --color-info: var(--info);
 
-  /* Override default Tailwind elevation so every existing shadow-* utility
-     across the app picks up the refined, brand-tinted values automatically. */
   --shadow-xs: var(--elevation-xs);
   --shadow-sm: var(--elevation-sm);
   --shadow-md: var(--elevation-md);
   --shadow-lg: var(--elevation-lg);
   --shadow-xl: var(--elevation-xl);
+
+  --radius-xl: 1rem;
+  --radius-2xl: 1.25rem;
 
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
@@ -90,28 +189,20 @@
 
 body {
   min-height: 100vh;
-  background:
-    radial-gradient(1100px 560px at 100% -8%, rgb(244 170 0 / 0.05), transparent 58%),
-    radial-gradient(900px 480px at -8% -4%, rgb(51 30 84 / 0.06), transparent 55%),
-    var(--background);
-  background-attachment: fixed;
+  background: var(--background);
   color: var(--foreground);
   font-family: var(--font-sans), Arial, Helvetica, sans-serif;
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
-/* Tighter, more confident headings for a polished, editorial feel */
 @layer base {
   h1,
   h2,
   h3 {
     letter-spacing: -0.02em;
   }
-}
-
-/* Refined, unobtrusive scrollbars */
-@layer base {
   * {
     scrollbar-width: thin;
     scrollbar-color: var(--border-strong) transparent;
@@ -126,8 +217,19 @@ body {
     border: 3px solid transparent;
     background-clip: content-box;
   }
-  *::-webkit-scrollbar-thumb:hover {
-    background-color: var(--lu-purple-300);
+}
+
+@layer components {
+  /* Themed app sidebar surface */
+  .app-sidebar {
+    background: linear-gradient(180deg, var(--sidebar-from), var(--sidebar-to));
+    border-right: 1px solid var(--sidebar-border);
+  }
+  /* Themed sticky glass header */
+  .ef-glass {
+    background-color: var(--topbar);
+    backdrop-filter: saturate(1.4) blur(12px);
+    border-bottom: 1px solid var(--border);
   }
 }
 
@@ -144,10 +246,4 @@ body {
 
 .ef-fade-in {
   animation: ef-fade-in 0.28s cubic-bezier(0.22, 1, 0.36, 1);
-}
-
-/* Subtle glass effect for sticky headers */
-.ef-glass {
-  background-color: color-mix(in srgb, var(--surface) 82%, transparent);
-  backdrop-filter: saturate(1.4) blur(10px);
 }

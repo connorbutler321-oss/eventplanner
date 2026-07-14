@@ -2,10 +2,11 @@ import type { User } from "@/lib/types";
 import { exitVendorPreviewAction, lockScreenAction, logoutAction } from "@/lib/actions/auth";
 import { Button } from "@/components/ui/Button";
 import { TopNavItem } from "@/components/layout/TopNavItem";
+import { IconStore, IconClipboard } from "@/components/ui/icons";
 
 const NAV_ITEMS = [
-  { href: "/vendor", label: "Browse Events", exact: true },
-  { href: "/vendor/my-registrations", label: "My Registrations" },
+  { href: "/vendor", label: "Browse Events", icon: <IconStore size={16} />, exact: true },
+  { href: "/vendor/my-registrations", label: "My Registrations", icon: <IconClipboard size={16} /> },
 ];
 
 export function VendorShell({

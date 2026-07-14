@@ -17,10 +17,10 @@ export default async function PlannerFloorPlanEditorPage({
   return (
     <div className="ef-fade-in">
       <div className="mb-4">
-        <h1 className="text-2xl font-bold text-lu-purple-900">{plan.isTemplate ? "Template: " : ""}{plan.name}</h1>
+        <h1 className="text-2xl font-bold text-heading">{plan.isTemplate ? "Template: " : ""}{plan.name}</h1>
         {usedByEvent && (
-          <p className="mt-1 text-sm text-gray-600">
-            Used by <span className="font-medium text-lu-purple-700">{usedByEvent.name}</span>
+          <p className="mt-1 text-sm text-muted-foreground">
+            Used by <span className="font-medium text-primary">{usedByEvent.name}</span>
           </p>
         )}
       </div>
