@@ -1,14 +1,15 @@
 import { cn } from "@/lib/cn";
 import type { EventStatus, RegistrationStatus, SpaceStatus } from "@/lib/types";
 
+// Alpha-tinted fills so badges read correctly on both light and dark surfaces.
 const toneClasses: Record<string, string> = {
-  neutral: "bg-gray-100 text-gray-700",
-  purple: "bg-lu-purple-100 text-lu-purple-700",
-  gold: "bg-lu-gold-100 text-lu-gold-600",
-  success: "bg-green-100 text-success",
-  warning: "bg-amber-100 text-warning",
-  danger: "bg-red-100 text-danger",
-  info: "bg-blue-100 text-info",
+  neutral: "bg-foreground/8 text-muted-foreground ring-1 ring-inset ring-foreground/10",
+  purple: "bg-lu-purple-400/15 text-lu-purple-400 ring-1 ring-inset ring-lu-purple-400/25",
+  gold: "bg-lu-gold-500/15 text-lu-gold-600 ring-1 ring-inset ring-lu-gold-500/30",
+  success: "bg-success/12 text-success ring-1 ring-inset ring-success/25",
+  warning: "bg-warning/12 text-warning ring-1 ring-inset ring-warning/25",
+  danger: "bg-danger/12 text-danger ring-1 ring-inset ring-danger/25",
+  info: "bg-info/12 text-info ring-1 ring-inset ring-info/25",
 };
 
 export function Badge({

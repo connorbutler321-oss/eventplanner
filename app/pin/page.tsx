@@ -12,7 +12,7 @@ export default async function PinPage() {
     <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-lu-purple-900 via-lu-purple-700 to-lu-purple-600 px-4 py-10">
       <div className="w-full max-w-sm">
         <div className="mb-8 text-center">
-          <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-lu-gold-400 text-xl font-bold text-lu-purple-900 shadow-lg">
+          <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-lu-gold-400 text-xl font-bold text-heading shadow-lg">
             {device.name
               .split(" ")
               .map((p) => p[0])

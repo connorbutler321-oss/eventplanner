@@ -142,7 +142,7 @@ export function FloorPlanEditor({ plan }: { plan: FloorPlan }) {
       </div>
 
       <div className="mb-4 flex flex-wrap items-center gap-2 rounded-lg border border-border bg-surface p-3">
-        <span className="text-xs font-semibold text-gray-500">Add:</span>
+        <span className="text-xs font-semibold text-muted-foreground">Add:</span>
         <Button size="sm" variant="secondary" onClick={() => addSpace("booth")}>
           + Booth
         </Button>
@@ -251,7 +251,7 @@ export function FloorPlanEditor({ plan }: { plan: FloorPlan }) {
               </Button>
             </div>
           ) : (
-            <p className="text-xs text-gray-500">
+            <p className="text-xs text-muted-foreground">
               Click a space to edit it, or drag it to reposition. Use the buttons above to add new spaces.
             </p>
           )}

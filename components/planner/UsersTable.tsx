@@ -18,7 +18,7 @@ export function UsersTable({ users, currentUserId }: { users: User[]; currentUse
   return (
     <div className="overflow-x-auto">
       <table className="w-full text-left text-sm">
-        <thead className="border-b border-border bg-lu-purple-50/60 text-xs uppercase text-gray-500">
+        <thead className="border-b border-border bg-surface-muted text-xs uppercase text-muted-foreground">
           <tr>
             <th className="px-4 py-3">Name</th>
             <th className="px-4 py-3">Email</th>
@@ -44,12 +44,12 @@ function UserRow({ user, isSelf }: { user: User; isSelf: boolean }) {
   const isStaffRole = user.role !== "vendor";
 
   return (
-    <tr className="border-b border-border last:border-0 hover:bg-lu-purple-50/40">
-      <td className="px-4 py-3 font-medium text-lu-purple-900">
+    <tr className="border-b border-border last:border-0 hover:bg-surface-muted">
+      <td className="px-4 py-3 font-medium text-heading">
         {user.name}
-        {isSelf && <span className="ml-2 text-xs font-normal text-gray-400">(you)</span>}
+        {isSelf && <span className="ml-2 text-xs font-normal text-muted-foreground">(you)</span>}
       </td>
-      <td className="px-4 py-3 text-gray-600">{user.email}</td>
+      <td className="px-4 py-3 text-muted-foreground">{user.email}</td>
       <td className="px-4 py-3">
         {isStaffRole ? (
           <Select
@@ -93,7 +93,7 @@ function UserRow({ user, isSelf }: { user: User; isSelf: boolean }) {
           </button>
         </div>
       </td>
-      <td className="px-4 py-3 text-xs text-gray-500">
+      <td className="px-4 py-3 text-xs text-muted-foreground">
         {user.lastLogin ? new Date(user.lastLogin).toLocaleString() : "Never"}
       </td>
       <td className="px-4 py-3">

@@ -14,8 +14,8 @@ export default async function PlannerFloorPlansPage() {
   return (
     <div className="ef-fade-in space-y-6">
       <div>
-        <h1 className="text-2xl font-bold text-lu-purple-900">Floor Plans</h1>
-        <p className="mt-1 text-sm text-gray-600">
+        <h1 className="text-2xl font-bold text-heading">Floor Plans</h1>
+        <p className="mt-1 text-sm text-muted-foreground">
           Build custom layouts, start from a template, or upload an existing floor plan to trace over.
         </p>
       </div>
@@ -30,15 +30,15 @@ export default async function PlannerFloorPlansPage() {
       </Card>
 
       <div>
-        <h2 className="mb-3 text-sm font-semibold uppercase tracking-wide text-gray-500">Event floor plans</h2>
+        <h2 className="mb-3 text-sm font-semibold uppercase tracking-wide text-muted-foreground">Event floor plans</h2>
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {eventPlans.map((plan) => {
             const linkedEvent = events.find((e) => e.floorPlanId === plan.id);
             return (
               <Card key={plan.id}>
                 <CardBody className="p-4">
-                  <p className="font-semibold text-lu-purple-900">{plan.name}</p>
-                  <p className="mb-3 text-xs text-gray-500">
+                  <p className="font-semibold text-heading">{plan.name}</p>
+                  <p className="mb-3 text-xs text-muted-foreground">
                     {linkedEvent ? `Used by ${linkedEvent.name}` : "Not linked to an event"} • {plan.spaces.length} spaces
                   </p>
                   <Button href={`/planner/floorplans/${plan.id}`} size="sm" variant="secondary" className="w-full">
@@ -48,21 +48,21 @@ export default async function PlannerFloorPlansPage() {
               </Card>
             );
           })}
-          {eventPlans.length === 0 && <p className="text-sm text-gray-500">No floor plans yet.</p>}
+          {eventPlans.length === 0 && <p className="text-sm text-muted-foreground">No floor plans yet.</p>}
         </div>
       </div>
 
       <div>
-        <h2 className="mb-3 text-sm font-semibold uppercase tracking-wide text-gray-500">Templates</h2>
+        <h2 className="mb-3 text-sm font-semibold uppercase tracking-wide text-muted-foreground">Templates</h2>
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {templates.map((plan) => (
             <Card key={plan.id}>
               <CardBody className="p-4">
                 <div className="mb-2 flex items-center justify-between">
-                  <p className="font-semibold text-lu-purple-900">{plan.name}</p>
+                  <p className="font-semibold text-heading">{plan.name}</p>
                   <Badge tone="purple">Template</Badge>
                 </div>
-                <p className="mb-3 text-xs text-gray-500">{plan.spaces.length} spaces</p>
+                <p className="mb-3 text-xs text-muted-foreground">{plan.spaces.length} spaces</p>
                 <Button href={`/planner/floorplans/${plan.id}`} size="sm" variant="secondary" className="w-full">
                   Preview / edit
                 </Button>

@@ -62,9 +62,9 @@ export function AIAssistPanel({
           ✨ Summarize trends
         </Button>
       </div>
-      {pending && <p className="mt-3 text-xs text-gray-500">Generating…</p>}
+      {pending && <p className="mt-3 text-xs text-muted-foreground">Generating…</p>}
       {result && !pending && (
-        <p className="mt-3 rounded-lg bg-lu-purple-50 px-3 py-2.5 text-sm text-lu-purple-900">{result}</p>
+        <p className="mt-3 rounded-lg bg-surface-muted px-3 py-2.5 text-sm text-heading">{result}</p>
       )}
     </div>
   );

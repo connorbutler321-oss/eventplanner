@@ -14,8 +14,8 @@ export default async function MyRegistrationsPage() {
   return (
     <div className="ef-fade-in">
       <div className="mb-6">
-        <h1 className="text-2xl font-bold text-lu-purple-900">My Registrations</h1>
-        <p className="mt-1 text-sm text-gray-600">Track the status of the events you&apos;ve registered for.</p>
+        <h1 className="text-2xl font-bold text-heading">My Registrations</h1>
+        <p className="mt-1 text-sm text-muted-foreground">Track the status of the events you&apos;ve registered for.</p>
       </div>
 
       <div className="space-y-3">
@@ -28,8 +28,8 @@ export default async function MyRegistrationsPage() {
             <Card key={r.id}>
               <CardBody className="flex flex-wrap items-center justify-between gap-3 p-4">
                 <div>
-                  <p className="font-semibold text-lu-purple-900">{event?.name ?? "Unknown event"}</p>
-                  <p className="text-xs text-gray-500">
+                  <p className="font-semibold text-heading">{event?.name ?? "Unknown event"}</p>
+                  <p className="text-xs text-muted-foreground">
                     {event && new Date(event.date).toLocaleDateString()} • {event?.location}
                     {space && ` • Space ${space.label}`}
                   </p>
@@ -59,7 +59,7 @@ export default async function MyRegistrationsPage() {
           );
         })}
         {registrations.length === 0 && (
-          <p className="text-sm text-gray-500">You haven&apos;t registered for any events yet.</p>
+          <p className="text-sm text-muted-foreground">You haven&apos;t registered for any events yet.</p>
         )}
       </div>
     </div>

@@ -2,14 +2,24 @@ import Link from "next/link";
 import type { User } from "@/lib/types";
 import { enterVendorPreviewAction, lockScreenAction, logoutAction } from "@/lib/actions/auth";
 import { Button } from "@/components/ui/Button";
+import { NavItem } from "@/components/layout/NavItem";
+import { ThemeToggle } from "@/components/layout/ThemeToggle";
+import {
+  IconDashboard,
+  IconCalendar,
+  IconMap,
+  IconStore,
+  IconUsers,
+  IconBell,
+} from "@/components/ui/icons";
 
 const NAV_ITEMS = [
-  { href: "/planner", label: "Dashboard", icon: "▦" },
-  { href: "/planner/events", label: "Events", icon: "📅" },
-  { href: "/planner/floorplans", label: "Floor Plans", icon: "🗺️" },
-  { href: "/planner/vendors", label: "Vendors", icon: "🏪" },
-  { href: "/planner/users", label: "Users & Access", icon: "🔑" },
-  { href: "/planner/notifications", label: "Notifications", icon: "🔔" },
+  { href: "/planner", label: "Dashboard", icon: <IconDashboard size={18} />, exact: true },
+  { href: "/planner/events", label: "Events", icon: <IconCalendar size={18} /> },
+  { href: "/planner/floorplans", label: "Floor Plans", icon: <IconMap size={18} /> },
+  { href: "/planner/vendors", label: "Vendors", icon: <IconStore size={18} /> },
+  { href: "/planner/users", label: "Users & Access", icon: <IconUsers size={18} /> },
+  { href: "/planner/notifications", label: "Notifications", icon: <IconBell size={18} /> },
 ];
 
 export function PlannerShell({ user, children }: { user: User; children: React.ReactNode }) {
@@ -17,34 +27,30 @@ export function PlannerShell({ user, children }: { user: User; children: React.R
 
   return (
     <div className="flex min-h-screen bg-background">
-      <aside className="hidden w-60 shrink-0 flex-col border-r border-border bg-lu-purple-900 text-white md:flex">
-        <div className="flex items-center gap-2 px-5 py-5">
-          <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-lu-gold-400 text-sm font-bold text-lu-purple-900">
+      <aside className="app-sidebar hidden w-64 shrink-0 flex-col md:flex">
+        <div className="flex items-center gap-2.5 px-5 py-5">
+          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-(--sidebar-logo-from) to-(--sidebar-logo-to) text-sm font-bold text-(--sidebar-logo-fg) shadow-md">
             EF
           </div>
           <div>
-            <p className="text-sm font-bold leading-tight">EventFlow AI</p>
-            <p className="text-[11px] text-lu-purple-200">Operations</p>
+            <p className="text-sm font-bold leading-tight text-sidebar-active-fg">EventFlow AI</p>
+            <p className="text-[11px] font-medium text-sidebar-fg-muted">Operations</p>
           </div>
         </div>
-        <nav className="flex-1 space-y-1 px-3 py-2">
+        <p className="px-5 pb-2 pt-3 text-[10px] font-semibold uppercase tracking-widest text-sidebar-fg-muted">
+          Menu
+        </p>
+        <nav className="flex-1 space-y-1 px-3">
           {NAV_ITEMS.map((item) => (
-            <Link
-              key={item.href}
-              href={item.href}
-              className="flex items-center gap-2.5 rounded-lg px-3 py-2.5 text-sm font-medium text-lu-purple-100 transition-colors hover:bg-lu-purple-700 hover:text-white"
-            >
-              <span className="text-base">{item.icon}</span>
-              {item.label}
-            </Link>
+            <NavItem key={item.href} {...item} />
           ))}
         </nav>
-        <div className="border-t border-lu-purple-700/60 px-3 py-4">
+        <div className="border-t border-sidebar-border px-3 py-4">
           {canPreviewVendor && (
             <form action={enterVendorPreviewAction}>
               <button
                 type="submit"
-                className="mb-2 flex w-full cursor-pointer items-center gap-2 rounded-lg bg-lu-purple-700/60 px-3 py-2 text-left text-xs font-semibold text-lu-gold-400 hover:bg-lu-purple-700"
+                className="flex w-full cursor-pointer items-center gap-2 rounded-xl bg-sidebar-hover px-3 py-2.5 text-left text-xs font-semibold text-lu-gold-600 transition-colors hover:bg-sidebar-active dark:text-lu-gold-400"
               >
                 ⇄ Preview vendor view
               </button>
@@ -54,20 +60,21 @@ export function PlannerShell({ user, children }: { user: User; children: React.R
       </aside>
 
       <div className="flex min-w-0 flex-1 flex-col">
-        <header className="flex items-center justify-between border-b border-border bg-surface px-4 py-3 md:px-6">
-          <div className="md:hidden text-sm font-bold text-lu-purple-900">EventFlow AI</div>
+        <header className="ef-glass sticky top-0 z-20 flex items-center justify-between px-4 py-3 md:px-8">
+          <div className="md:hidden text-sm font-bold text-heading">EventFlow AI</div>
           <div className="hidden md:block" />
           <div className="flex items-center gap-3">
             <div className="text-right">
-              <p className="text-sm font-semibold text-lu-purple-900">{user.name}</p>
-              <p className="text-xs capitalize text-gray-500">{user.role}</p>
+              <p className="text-sm font-semibold text-heading">{user.name}</p>
+              <p className="text-xs capitalize text-muted-foreground">{user.role}</p>
             </div>
-            <div className="flex h-9 w-9 items-center justify-center rounded-full bg-lu-purple-100 text-sm font-bold text-lu-purple-700">
+            <div className="flex h-9 w-9 items-center justify-center rounded-full bg-gradient-to-br from-lu-purple-400 to-lu-purple-600 text-sm font-bold text-white ring-1 ring-lu-purple-500/30">
               {user.name
                 .split(" ")
                 .map((p) => p[0])
                 .join("")}
             </div>
+            <ThemeToggle />
             <form action={lockScreenAction}>
               <Button type="submit" variant="ghost" size="sm">
                 Lock
@@ -85,13 +92,14 @@ export function PlannerShell({ user, children }: { user: User; children: React.R
             <Link
               key={item.href}
               href={item.href}
-              className="whitespace-nowrap rounded-lg px-3 py-1.5 text-xs font-medium text-lu-purple-700 hover:bg-lu-purple-50"
+              className="inline-flex items-center gap-1.5 whitespace-nowrap rounded-lg px-3 py-1.5 text-xs font-medium text-foreground hover:bg-surface-muted"
             >
-              {item.icon} {item.label}
+              <span className="[&>svg]:h-4 [&>svg]:w-4">{item.icon}</span>
+              {item.label}
             </Link>
           ))}
         </nav>
-        <main className="flex-1 px-4 py-6 md:px-8">{children}</main>
+        <main className="flex-1 px-4 py-8 md:px-10">{children}</main>
       </div>
     </div>
   );

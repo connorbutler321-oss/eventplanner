@@ -5,16 +5,16 @@ type Variant = "primary" | "gold" | "secondary" | "ghost" | "danger";
 type Size = "sm" | "md" | "lg";
 
 const base =
-  "inline-flex items-center justify-center gap-2 rounded-lg font-semibold transition-all duration-150 disabled:opacity-50 disabled:pointer-events-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[--lu-purple-500] active:scale-[0.97] cursor-pointer";
+  "inline-flex items-center justify-center gap-2 rounded-lg font-semibold transition-all duration-200 ease-out disabled:opacity-50 disabled:pointer-events-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/50 focus-visible:ring-offset-2 focus-visible:ring-offset-background active:scale-[0.98] active:translate-y-0 cursor-pointer";
 
 const variants: Record<Variant, string> = {
   primary:
-    "bg-lu-purple-600 text-white shadow-sm hover:bg-lu-purple-700 hover:shadow-md",
-  gold: "bg-lu-gold-500 text-lu-purple-900 shadow-sm hover:bg-lu-gold-400 hover:shadow-md",
+    "bg-primary text-on-primary shadow-sm hover:bg-primary-hover hover:shadow-md hover:-translate-y-px",
+  gold: "bg-lu-gold-500 text-lu-purple-900 shadow-sm hover:bg-lu-gold-400 hover:shadow-md hover:-translate-y-px",
   secondary:
-    "bg-white text-lu-purple-700 border border-lu-purple-200 hover:bg-lu-purple-50 shadow-sm",
-  ghost: "bg-transparent text-lu-purple-700 hover:bg-lu-purple-50",
-  danger: "bg-danger text-white hover:opacity-90 shadow-sm",
+    "bg-surface text-heading border border-border-strong hover:bg-surface-muted hover:border-ring/40 shadow-xs hover:shadow-sm",
+  ghost: "bg-transparent text-foreground hover:bg-surface-muted",
+  danger: "bg-danger text-white shadow-sm hover:opacity-90 hover:shadow-md hover:-translate-y-px",
 };
 
 const sizes: Record<Size, string> = {
