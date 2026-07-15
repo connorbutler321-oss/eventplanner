@@ -1,5 +1,3 @@
-
-
 "use server";
 
 import Anthropic from "@anthropic-ai/sdk";
@@ -7,31 +5,60 @@ import type { EventRecord } from "@/lib/types";
 
 // --- AI assist seam ------------------------------------------------------
 // These functions back the "AI-assist" buttons across the planner UI.
-// flagCapacityRisk calls the real Claude API when ANTHROPIC_API_KEY is set;
-// otherwise it falls back to simple rule-based placeholder text so the
-// shell still works with no API key configured. The other functions still
-// return templated placeholder text — swap their bodies for real Claude
-// API calls (https://docs.claude.com) the same way when ready. The
-// function signatures are the contract the UI already depends on.
+// Each calls the real Claude API when ANTHROPIC_API_KEY is set; otherwise
+// it falls back to the original templated placeholder text so the shell
+// still works with no API key configured.
 
 const client = process.env.ANTHROPIC_API_KEY ? new Anthropic() : null;
+
+async function askClaude(system: string, prompt: string, fallback: string): Promise<string> {
+  if (!client) return fallback;
+  try {
+    const message = await client.messages.create({
+      model: "claude-sonnet-5",
+      max_tokens: 300,
+      system,
+      messages: [{ role: "user", content: prompt }],
+    });
+    const text = message.content.find((block) => block.type === "text")?.text.trim();
+    return text || fallback;
+  } catch {
+    // Network/API failure — degrade gracefully instead of breaking the UI.
+    return fallback;
+  }
+}
 
 export async function generateEventDescription(input: {
   name: string;
   category: string;
   location: string;
 }): Promise<string> {
-  return `${input.name} is a ${input.category.toLowerCase()} event held at ${input.location}. Join us for a great time — more details coming soon. (AI-generated draft — edit before publishing.)`;
+  const fallback = `${input.name} is a ${input.category.toLowerCase()} event held at ${input.location}. Join us for a great time — more details coming soon. (AI-generated draft — edit before publishing.)`;
+  return askClaude(
+    "You write short, inviting event descriptions (2-3 sentences) for a university event-planning tool. Return only the description text, no preamble or quotes.",
+    `Event name: ${input.name}\nCategory: ${input.category}\nLocation: ${input.location}`,
+    fallback
+  );
 }
 
 export async function suggestReminderMessage(event: EventRecord): Promise<string> {
-  return `Reminder: "${event.name}" is coming up on ${new Date(event.date).toLocaleDateString()} at ${
+  const fallback = `Reminder: "${event.name}" is coming up on ${new Date(event.date).toLocaleDateString()} at ${
     event.location
   }. We look forward to seeing you there! (AI-generated draft.)`;
+  return askClaude(
+    "You write short, friendly reminder messages (1-2 sentences) for attendees of an upcoming university event. Return only the message text, no preamble or quotes.",
+    `Event name: ${event.name}\nDate: ${new Date(event.date).toLocaleDateString()}\nLocation: ${event.location}`,
+    fallback
+  );
 }
 
 export async function generateFollowUpEmail(event: EventRecord): Promise<string> {
-  return `Thank you for taking part in "${event.name}"! We hope you had a great experience. We'd love to hear your feedback for next time. (AI-generated draft.)`;
+  const fallback = `Thank you for taking part in "${event.name}"! We hope you had a great experience. We'd love to hear your feedback for next time. (AI-generated draft.)`;
+  return askClaude(
+    "You write short, warm post-event follow-up messages (2-3 sentences) thanking attendees and inviting feedback, for a university event-planning tool. Return only the message text, no preamble or quotes.",
+    `Event name: ${event.name}`,
+    fallback
+  );
 }
 
 export async function summarizeRegistrationTrends(input: {
@@ -41,7 +68,12 @@ export async function summarizeRegistrationTrends(input: {
   capacity: number;
 }): Promise<string> {
   const pctFull = input.capacity > 0 ? Math.round((input.confirmed / input.capacity) * 100) : 0;
-  return `"${input.eventName}" is ${pctFull}% full (${input.confirmed}/${input.capacity} confirmed, ${input.waitlisted} waitlisted). (AI-generated summary — placeholder.)`;
+  const fallback = `"${input.eventName}" is ${pctFull}% full (${input.confirmed}/${input.capacity} confirmed, ${input.waitlisted} waitlisted). (AI-generated summary — placeholder.)`;
+  return askClaude(
+    "You write short, informative one-sentence summaries of an event's registration trend for a university operations dashboard. Return only the summary text, no preamble or quotes.",
+    `Event name: ${input.eventName}\nConfirmed: ${input.confirmed}\nWaitlisted: ${input.waitlisted}\nCapacity: ${input.capacity}\nPercent full: ${pctFull}%`,
+    fallback
+  );
 }
 
 function fallbackCapacityRisk(input: {
