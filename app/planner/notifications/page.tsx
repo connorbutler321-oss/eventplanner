@@ -19,10 +19,10 @@ export default async function PlannerNotificationsPage() {
   return (
     <div className="ef-fade-in">
       <div className="mb-6">
-        <h1 className="text-2xl font-bold text-lu-purple-900">Notifications</h1>
-        <p className="mt-1 text-sm text-gray-600">
+        <h1 className="text-2xl font-bold text-heading">Notifications</h1>
+        <p className="mt-1 text-sm text-muted-foreground">
           A live log of every email confirmation, waitlist notice, and reminder sent to vendors. Currently
-          simulated in-app — swap <code className="rounded bg-gray-100 px-1">lib/notifications.ts</code> for a
+          simulated in-app — swap <code className="rounded bg-surface-muted px-1">lib/notifications.ts</code> for a
           real SendGrid/Resend/Gmail integration to send for real.
         </p>
       </div>
@@ -36,20 +36,20 @@ export default async function PlannerNotificationsPage() {
             <Card key={n.id}>
               <CardBody className="p-4">
                 <div className="mb-1 flex items-center justify-between gap-2">
-                  <p className="text-sm font-semibold text-lu-purple-900">
+                  <p className="text-sm font-semibold text-heading">
                     {attendee?.businessName || attendee?.name || "Unknown vendor"}
-                    {event && <span className="font-normal text-gray-500"> • {event.name}</span>}
+                    {event && <span className="font-normal text-muted-foreground"> • {event.name}</span>}
                   </p>
                   <Badge tone={typeTone[n.type]}>{n.type}</Badge>
                 </div>
-                <p className="text-sm text-gray-700">{n.message}</p>
-                <p className="mt-1 text-xs text-gray-400">{new Date(n.sentAt).toLocaleString()}</p>
+                <p className="text-sm text-foreground">{n.message}</p>
+                <p className="mt-1 text-xs text-muted-foreground">{new Date(n.sentAt).toLocaleString()}</p>
               </CardBody>
             </Card>
           );
         })}
         {notifications.length === 0 && (
-          <p className="text-sm text-gray-500">No notifications yet — they&apos;ll appear here as vendors register.</p>
+          <p className="text-sm text-muted-foreground">No notifications yet — they&apos;ll appear here as vendors register.</p>
         )}
       </div>
     </div>

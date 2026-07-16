@@ -1,11 +1,12 @@
-import Link from "next/link";
 import type { User } from "@/lib/types";
 import { exitVendorPreviewAction, lockScreenAction, logoutAction } from "@/lib/actions/auth";
 import { Button } from "@/components/ui/Button";
+import { TopNavItem } from "@/components/layout/TopNavItem";
+import { IconStore, IconClipboard } from "@/components/ui/icons";
 
 const NAV_ITEMS = [
-  { href: "/vendor", label: "Browse Events" },
-  { href: "/vendor/my-registrations", label: "My Registrations" },
+  { href: "/vendor", label: "Browse Events", icon: <IconStore size={16} />, exact: true },
+  { href: "/vendor/my-registrations", label: "My Registrations", icon: <IconClipboard size={16} /> },
 ];
 
 export function VendorShell({
@@ -32,27 +33,21 @@ export function VendorShell({
         </div>
       )}
 
-      <header className="border-b border-border bg-lu-purple-900 text-white">
+      <header className="sticky top-0 z-20 border-b border-white/10 bg-gradient-to-r from-lu-purple-900 via-lu-purple-800 to-lu-purple-900 text-white shadow-sm">
         <div className="mx-auto flex max-w-5xl items-center justify-between px-4 py-4 md:px-6">
-          <div className="flex items-center gap-2">
-            <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-lu-gold-400 text-sm font-bold text-lu-purple-900">
+          <div className="flex items-center gap-2.5">
+            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-lu-gold-400 to-lu-gold-500 text-sm font-bold text-lu-purple-900 shadow-md">
               EF
             </div>
             <div>
               <p className="text-sm font-bold leading-tight">EventFlow AI</p>
-              <p className="text-[11px] text-lu-purple-200">Vendor Registration</p>
+              <p className="text-[11px] font-medium text-lu-purple-200">Vendor Registration</p>
             </div>
           </div>
 
           <nav className="hidden gap-1 sm:flex">
             {NAV_ITEMS.map((item) => (
-              <Link
-                key={item.href}
-                href={item.href}
-                className="rounded-lg px-3 py-2 text-sm font-medium text-lu-purple-100 hover:bg-lu-purple-700 hover:text-white"
-              >
-                {item.label}
-              </Link>
+              <TopNavItem key={item.href} {...item} />
             ))}
           </nav>
 
@@ -79,13 +74,7 @@ export function VendorShell({
         </div>
         <nav className="flex gap-1 overflow-x-auto px-4 pb-2 sm:hidden">
           {NAV_ITEMS.map((item) => (
-            <Link
-              key={item.href}
-              href={item.href}
-              className="whitespace-nowrap rounded-lg px-3 py-1.5 text-xs font-medium text-lu-purple-100 hover:bg-lu-purple-700 hover:text-white"
-            >
-              {item.label}
-            </Link>
+            <TopNavItem key={item.href} {...item} compact />
           ))}
         </nav>
       </header>

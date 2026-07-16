@@ -34,7 +34,7 @@ export function RegistrationForm({
       {boothId && <input type="hidden" name="boothId" value={boothId} />}
 
       {boothLabel && (
-        <p className="mb-4 rounded-lg bg-lu-purple-50 px-3 py-2 text-sm text-lu-purple-800">
+        <p className="mb-4 rounded-lg bg-surface-muted px-3 py-2 text-sm text-foreground">
           Reserving space <strong>{boothLabel}</strong>
         </p>
       )}

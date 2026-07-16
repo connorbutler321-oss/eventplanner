@@ -10,8 +10,8 @@ export default async function VendorEventListPage() {
   return (
     <div className="ef-fade-in">
       <div className="mb-6">
-        <h1 className="text-2xl font-bold text-lu-purple-900">Upcoming Events</h1>
-        <p className="mt-1 text-sm text-gray-600">
+        <h1 className="text-2xl font-bold text-heading">Upcoming Events</h1>
+        <p className="mt-1 text-sm text-muted-foreground">
           Choose an event below to register your business as a vendor.
         </p>
       </div>
@@ -24,11 +24,11 @@ export default async function VendorEventListPage() {
             <Card key={event.id} className="flex flex-col">
               <CardBody className="flex flex-1 flex-col p-5">
                 <div className="mb-2 flex items-start justify-between gap-2">
-                  <h2 className="font-semibold text-lu-purple-900">{event.name}</h2>
+                  <h2 className="font-semibold text-heading">{event.name}</h2>
                   <EventStatusBadge status={event.status} />
                 </div>
-                <p className="mb-3 flex-1 text-sm text-gray-600">{event.description}</p>
-                <dl className="mb-4 grid grid-cols-2 gap-y-1 text-xs text-gray-500">
+                <p className="mb-3 flex-1 text-sm text-muted-foreground">{event.description}</p>
+                <dl className="mb-4 grid grid-cols-2 gap-y-1 text-xs text-muted-foreground">
                   <dt className="font-medium">Date</dt>
                   <dd>{new Date(event.date).toLocaleDateString()}</dd>
                   <dt className="font-medium">Location</dt>
@@ -49,7 +49,7 @@ export default async function VendorEventListPage() {
           );
         })}
         {events.length === 0 && (
-          <p className="col-span-2 text-sm text-gray-500">No events are open for registration right now.</p>
+          <p className="col-span-2 text-sm text-muted-foreground">No events are open for registration right now.</p>
         )}
       </div>
     </div>

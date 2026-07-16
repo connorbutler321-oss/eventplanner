@@ -1,7 +1,7 @@
 import { cn } from "@/lib/cn";
 
 const controlClasses =
-  "w-full rounded-lg border border-border bg-white px-3 py-2.5 text-sm text-foreground shadow-sm outline-none transition-colors focus:border-lu-purple-500 focus:ring-2 focus:ring-lu-purple-100";
+  "w-full rounded-lg border border-border bg-surface px-3 py-2.5 text-sm text-foreground shadow-sm outline-none transition-colors focus:border-lu-purple-500 focus:ring-2 focus:ring-lu-purple-100";
 
 export function Label({
   children,
@@ -13,9 +13,9 @@ export function Label({
   hint?: string;
 }) {
   return (
-    <label htmlFor={htmlFor} className="mb-1.5 block text-sm font-medium text-lu-purple-900">
+    <label htmlFor={htmlFor} className="mb-1.5 block text-sm font-medium text-heading">
       {children}
-      {hint && <span className="ml-1.5 font-normal text-gray-400">{hint}</span>}
+      {hint && <span className="ml-1.5 font-normal text-muted-foreground">{hint}</span>}
     </label>
   );
 }
@@ -34,7 +34,7 @@ export function Select({
   ...rest
 }: React.ComponentProps<"select">) {
   return (
-    <select className={cn(controlClasses, "cursor-pointer bg-white pr-8", className)} {...rest}>
+    <select className={cn(controlClasses, "cursor-pointer bg-surface pr-8", className)} {...rest}>
       {children}
     </select>
   );

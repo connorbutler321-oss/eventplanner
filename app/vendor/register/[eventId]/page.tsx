@@ -27,8 +27,8 @@ export default async function VendorRegisterPage({
   return (
     <div className="ef-fade-in">
       <div className="mb-6">
-        <h1 className="text-2xl font-bold text-lu-purple-900">Register for {event.name}</h1>
-        <p className="mt-1 text-sm text-gray-600">
+        <h1 className="text-2xl font-bold text-heading">Register for {event.name}</h1>
+        <p className="mt-1 text-sm text-muted-foreground">
           {new Date(event.date).toLocaleDateString()} • {event.location}
         </p>
       </div>

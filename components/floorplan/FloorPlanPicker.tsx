@@ -24,15 +24,15 @@ export function FloorPlanPicker({ plan, eventId }: { plan: FloorPlan; eventId: s
         <div className="mb-4 space-y-1.5 text-xs">
           <LegendRow swatch="bg-green-50 border-success" label="Available" />
           <LegendRow swatch="bg-red-50 border-danger" label="Reserved" />
-          <LegendRow swatch="bg-gray-100 border-gray-400" label="Blocked / stage / walkway" />
+          <LegendRow swatch="bg-surface-muted border-gray-400" label="Blocked / stage / walkway" />
         </div>
 
         {selected ? (
           <div className="rounded-lg border border-border bg-surface p-4">
-            <p className="text-sm font-semibold text-lu-purple-900">Space {selected.label}</p>
-            <p className="mb-3 text-xs capitalize text-gray-500">{selected.type}</p>
+            <p className="text-sm font-semibold text-heading">Space {selected.label}</p>
+            <p className="mb-3 text-xs capitalize text-muted-foreground">{selected.type}</p>
             {selected.price !== undefined && (
-              <p className="mb-3 text-sm text-gray-700">Fee: ${selected.price}</p>
+              <p className="mb-3 text-sm text-foreground">Fee: ${selected.price}</p>
             )}
             <Button
               className="w-full"
@@ -44,7 +44,7 @@ export function FloorPlanPicker({ plan, eventId }: { plan: FloorPlan; eventId: s
             </Button>
           </div>
         ) : (
-          <p className="rounded-lg border border-dashed border-border p-4 text-xs text-gray-500">
+          <p className="rounded-lg border border-dashed border-border p-4 text-xs text-muted-foreground">
             Click an available (green) space on the floor plan to select it.
           </p>
         )}
@@ -57,7 +57,7 @@ function LegendRow({ swatch, label }: { swatch: string; label: string }) {
   return (
     <div className="flex items-center gap-2">
       <span className={`h-3 w-3 rounded border ${swatch}`} />
-      <span className="text-gray-600">{label}</span>
+      <span className="text-muted-foreground">{label}</span>
     </div>
   );
 }

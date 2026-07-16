@@ -18,7 +18,7 @@ export function PinForm() {
         required
         autoFocus
         placeholder="• • • •"
-        className="mb-4 w-full rounded-lg border border-border bg-white px-4 py-4 text-center text-3xl tracking-[0.5em] shadow-sm outline-none focus:border-lu-purple-500 focus:ring-2 focus:ring-lu-purple-100"
+        className="mb-4 w-full rounded-lg border border-border bg-surface px-4 py-4 text-center text-3xl tracking-[0.5em] shadow-sm outline-none focus:border-lu-purple-500 focus:ring-2 focus:ring-lu-purple-100"
       />
 
       {state?.error && (

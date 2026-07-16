@@ -37,8 +37,8 @@ export default async function PlannerEventDetailPage({
     <div className="ef-fade-in space-y-6">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
-          <h1 className="text-2xl font-bold text-lu-purple-900">{event.name}</h1>
-          <p className="mt-1 text-sm text-gray-600">
+          <h1 className="text-2xl font-bold text-heading">{event.name}</h1>
+          <p className="mt-1 text-sm text-muted-foreground">
             {confirmed}/{event.capacity} confirmed • {waitlisted} waitlisted
           </p>
         </div>
@@ -67,7 +67,7 @@ export default async function PlannerEventDetailPage({
         </CardHeader>
         <div className="overflow-x-auto">
           <table className="w-full text-left text-sm">
-            <thead className="border-b border-border bg-lu-purple-50/60 text-xs uppercase text-gray-500">
+            <thead className="border-b border-border bg-surface-muted text-xs uppercase text-muted-foreground">
               <tr>
                 <th className="px-4 py-3">Vendor</th>
                 <th className="px-4 py-3">Contact</th>
@@ -82,12 +82,12 @@ export default async function PlannerEventDetailPage({
                 const space = plan?.spaces.find((s) => s.id === r.boothId);
                 const cancelable = r.status !== "Canceled";
                 return (
-                  <tr key={r.id} className="border-b border-border last:border-0 hover:bg-lu-purple-50/40">
+                  <tr key={r.id} className="border-b border-border last:border-0 hover:bg-surface-muted">
                     <td className="px-4 py-3">
-                      <p className="font-semibold text-lu-purple-900">{attendee?.businessName || attendee?.name}</p>
-                      <p className="text-xs text-gray-500">{attendee?.category}</p>
+                      <p className="font-semibold text-heading">{attendee?.businessName || attendee?.name}</p>
+                      <p className="text-xs text-muted-foreground">{attendee?.category}</p>
                     </td>
-                    <td className="px-4 py-3 text-xs text-gray-600">
+                    <td className="px-4 py-3 text-xs text-muted-foreground">
                       {attendee?.email}
                       <br />
                       {attendee?.phone}
@@ -136,7 +136,7 @@ export default async function PlannerEventDetailPage({
               })}
               {registrations.length === 0 && (
                 <tr>
-                  <td colSpan={5} className="px-4 py-6 text-center text-sm text-gray-500">
+                  <td colSpan={5} className="px-4 py-6 text-center text-sm text-muted-foreground">
                     No registrations yet.
                   </td>
                 </tr>
