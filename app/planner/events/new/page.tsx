@@ -2,8 +2,8 @@ import { getTemplates } from "@/lib/data/floorplans";
 import { EventForm } from "@/components/planner/EventForm";
 import { Card, CardBody } from "@/components/ui/Card";
 
-export default function NewEventPage() {
-  const templates = getTemplates();
+export default async function NewEventPage() {
+  const templates = await getTemplates();
 
   return (
     <div className="ef-fade-in max-w-3xl">

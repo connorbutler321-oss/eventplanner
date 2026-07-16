@@ -84,9 +84,18 @@ Implementation of the app shell is underway. See `ARCHITECTURE.md` for the plann
 - **Auth** — email + password on first sign-in, then a fast PIN unlock on the same device afterward (see `lib/auth.ts`).
 - **Role-based access** — `admin` / `planner` / `staff` / `vendor`, enforced both by `proxy.ts` (session presence) and by each layout (`app/planner/layout.tsx`, `app/vendor/layout.tsx`) re-checking the real role server-side. Admins/planners can toggle into a live "preview" of the vendor experience.
 
-### Data layer (temporary, swappable)
+### Data layer (Neon Postgres)
 
-Everything currently lives in an in-memory seeded store (`lib/data/store.ts`, `lib/data/seed.ts`) behind small functions in `lib/data/*.ts`. When the real database is ready (Neon per `ARCHITECTURE.md`), swap the bodies of those functions for real queries — the UI and business-rule logic don't need to change.
+Data lives in a [Neon](https://neon.tech) serverless Postgres database, accessed through small functions in `lib/data/*.ts` (see `lib/data/db.ts` for the client). On first use against an empty database, the schema is created and demo data is seeded automatically from `lib/data/seed.ts`.
+
+Set `DATABASE_URL` to a Neon connection string:
+
+- **Vercel** — injected automatically by the Neon integration. Production uses the production database branch; preview deployments get their own database branch.
+- **Local dev** — add it to `.env.local` (never commit this file):
+
+  ```
+  DATABASE_URL=postgres://...your Neon connection string...
+  ```
 
 ### Demo accounts
 
@@ -110,6 +119,5 @@ Open [http://localhost:3000](http://localhost:3000).
 
 ### Next steps
 
-- Add Neon (Postgres) and port `lib/data/*.ts` to it, per `ARCHITECTURE.md`.
 - Wire up a real email provider in `lib/notifications.ts` and the Claude API in `lib/ai.ts`.
-- Connect to Vercel for preview/production deploys.
+- Hash passwords/PINs and sign session cookies before real users are onboarded.

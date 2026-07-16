@@ -1,21 +1,37 @@
-import { store, nextId } from "./store";
+import { db, nextId } from "./db";
 import type { NotificationRecord, NotificationType } from "@/lib/types";
 
-export function getNotifications(): NotificationRecord[] {
-  return [...store.notifications].sort((a, b) => b.sentAt.localeCompare(a.sentAt));
+/* eslint-disable @typescript-eslint/no-explicit-any */
+function mapNotification(row: any): NotificationRecord {
+  return {
+    id: row.id,
+    registrationId: row.registration_id,
+    type: row.type,
+    message: row.message,
+    channel: row.channel,
+    sentAt: row.sent_at,
+  };
 }
 
-export function logNotification(input: {
+export async function getNotifications(): Promise<NotificationRecord[]> {
+  const sql = await db();
+  const rows = await sql`SELECT * FROM notifications ORDER BY sent_at DESC`;
+  return rows.map(mapNotification);
+}
+
+export async function logNotification(input: {
   registrationId: string;
   type: NotificationType;
   message: string;
-}): NotificationRecord {
+}): Promise<NotificationRecord> {
   const record: NotificationRecord = {
     id: nextId("n"),
     channel: "email",
     sentAt: new Date().toISOString(),
     ...input,
   };
-  store.notifications.push(record);
+  const sql = await db();
+  await sql`INSERT INTO notifications (id, registration_id, type, message, channel, sent_at)
+    VALUES (${record.id}, ${record.registrationId}, ${record.type}, ${record.message}, ${record.channel}, ${record.sentAt})`;
   return record;
 }

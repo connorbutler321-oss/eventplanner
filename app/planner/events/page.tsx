@@ -6,7 +6,14 @@ import { EventStatusBadge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
 
 export default async function PlannerEventsPage() {
-  const events = getEvents();
+  const events = await getEvents();
+  const rows = await Promise.all(
+    events.map(async (event) => ({
+      event,
+      confirmed: await confirmedCount(event.id),
+      waitlisted: await waitlistCount(event.id),
+    }))
+  );
 
   return (
     <div className="ef-fade-in">
@@ -32,7 +39,7 @@ export default async function PlannerEventsPage() {
               </tr>
             </thead>
             <tbody>
-              {events.map((event) => (
+              {rows.map(({ event, confirmed, waitlisted }) => (
                 <tr key={event.id} className="border-b border-border last:border-0 hover:bg-surface-muted">
                   <td className="px-4 py-3">
                     <Link href={`/planner/events/${event.id}`} className="font-semibold text-primary hover:underline">
@@ -46,9 +53,9 @@ export default async function PlannerEventsPage() {
                     <EventStatusBadge status={event.status} />
                   </td>
                   <td className="px-4 py-3">
-                    {confirmedCount(event.id)} / {event.capacity}
+                    {confirmed} / {event.capacity}
                   </td>
-                  <td className="px-4 py-3">{waitlistCount(event.id)}</td>
+                  <td className="px-4 py-3">{waitlisted}</td>
                 </tr>
               ))}
             </tbody>

@@ -13,11 +13,11 @@ async function dispatch(message: string, type: NotificationType): Promise<void> 
   console.log(`[notifications:stub] (${type}) would send email: "${message}"`);
 }
 
-export function sendNotification(input: {
+export async function sendNotification(input: {
   registrationId: string;
   type: NotificationType;
   message: string;
-}): void {
-  logNotification(input);
-  void dispatch(input.message, input.type);
+}): Promise<void> {
+  await logNotification(input);
+  await dispatch(input.message, input.type);
 }

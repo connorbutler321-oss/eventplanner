@@ -11,7 +11,7 @@ export async function loginAction(_prev: ActionState, formData: FormData): Promi
   const email = String(formData.get("email") ?? "").trim();
   const password = String(formData.get("password") ?? "");
 
-  const user = verifyPassword(email, password);
+  const user = await verifyPassword(email, password);
   if (!user) {
     return { error: "Invalid email or password. Try one of the demo accounts below." };
   }
@@ -27,7 +27,7 @@ export async function pinAction(_prev: ActionState, formData: FormData): Promise
     redirect("/login");
   }
 
-  const user = verifyPin(device.id, pin);
+  const user = await verifyPin(device.id, pin);
   if (!user) {
     return { error: "Incorrect PIN. Please try again." };
   }

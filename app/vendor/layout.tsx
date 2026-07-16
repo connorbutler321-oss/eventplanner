@@ -10,7 +10,7 @@ export default async function VendorLayout({ children }: { children: React.React
   const previewing = await isPreviewingVendor();
   if (user.role !== "vendor" && !previewing) redirect("/planner");
 
-  const attendee = user.attendeeId ? getAttendeeById(user.attendeeId) : undefined;
+  const attendee = user.attendeeId ? await getAttendeeById(user.attendeeId) : undefined;
 
   return (
     <VendorShell user={user} businessName={attendee?.businessName} isStaffPreview={previewing && user.role !== "vendor"}>

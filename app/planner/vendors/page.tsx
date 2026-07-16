@@ -1,11 +1,13 @@
 import { getAttendees } from "@/lib/data/attendees";
-import { getRegistrationsForAttendee } from "@/lib/data/registrations";
-import { getEventById } from "@/lib/data/events";
+import { getRegistrations } from "@/lib/data/registrations";
+import { getEvents } from "@/lib/data/events";
 import { Card } from "@/components/ui/Card";
 import { RegistrationStatusBadge } from "@/components/ui/Badge";
 
 export default async function PlannerVendorsPage() {
-  const attendees = getAttendees();
+  const attendees = await getAttendees();
+  const allRegistrations = await getRegistrations();
+  const events = new Map((await getEvents()).map((e) => [e.id, e]));
 
   return (
     <div className="ef-fade-in">
@@ -27,7 +29,7 @@ export default async function PlannerVendorsPage() {
             </thead>
             <tbody>
               {attendees.map((a) => {
-                const regs = getRegistrationsForAttendee(a.id);
+                const regs = allRegistrations.filter((r) => r.attendeeId === a.id);
                 return (
                   <tr key={a.id} className="border-b border-border last:border-0 hover:bg-surface-muted">
                     <td className="px-4 py-3">
@@ -43,7 +45,7 @@ export default async function PlannerVendorsPage() {
                     <td className="px-4 py-3">
                       <div className="flex flex-wrap gap-1.5">
                         {regs.map((r) => {
-                          const event = getEventById(r.eventId);
+                          const event = events.get(r.eventId);
                           return (
                             <span key={r.id} className="inline-flex items-center gap-1 rounded-full bg-surface-muted px-2 py-1 text-xs">
                               {event?.name ?? "Unknown"} <RegistrationStatusBadge status={r.status} />

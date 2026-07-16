@@ -10,9 +10,9 @@ export default async function VendorFloorPlanPage({
   params: Promise<{ eventId: string }>;
 }) {
   const { eventId } = await params;
-  const event = getEventById(eventId);
+  const event = await getEventById(eventId);
   if (!event) notFound();
-  const plan = getFloorPlanById(event.floorPlanId);
+  const plan = await getFloorPlanById(event.floorPlanId);
   if (!plan) notFound();
 
   return (

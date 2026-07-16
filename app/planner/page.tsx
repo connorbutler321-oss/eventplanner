@@ -17,29 +17,37 @@ import {
 } from "@/components/ui/icons";
 
 export default async function PlannerDashboardPage() {
-  const events = getEvents();
-  const openEvents = getOpenEvents();
-  const registrations = getRegistrations();
-  const tasks = getTasks();
+  const events = await getEvents();
+  const openEvents = await getOpenEvents();
+  const registrations = await getRegistrations();
+  const tasks = await getTasks();
 
   const totalConfirmed = registrations.filter((r) =>
     ["Confirmed", "Promoted", "Attended"].includes(r.status)
   ).length;
   const totalWaitlisted = registrations.filter((r) => r.status === "Waitlisted").length;
 
-  const trendData: TrendDatum[] = openEvents.map((e) => ({
+  const openEventCounts = await Promise.all(
+    openEvents.map(async (e) => ({
+      event: e,
+      confirmed: await confirmedCount(e.id),
+      waitlisted: await waitlistCount(e.id),
+    }))
+  );
+
+  const trendData: TrendDatum[] = openEventCounts.map(({ event: e, confirmed, waitlisted }) => ({
     name: e.name.length > 16 ? `${e.name.slice(0, 16)}…` : e.name,
-    Confirmed: confirmedCount(e.id),
-    Waitlisted: waitlistCount(e.id),
+    Confirmed: confirmed,
+    Waitlisted: waitlisted,
   }));
 
   const risks = await Promise.all(
-    openEvents.map(async (e) => ({
-      event: e,
+    openEventCounts.map(async ({ event, confirmed, waitlisted }) => ({
+      event,
       ...(await flagCapacityRisk({
-        confirmed: confirmedCount(e.id),
-        waitlisted: waitlistCount(e.id),
-        capacity: e.capacity,
+        confirmed,
+        waitlisted,
+        capacity: event.capacity,
       })),
     }))
   );

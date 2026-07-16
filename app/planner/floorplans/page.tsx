@@ -6,10 +6,10 @@ import { Button } from "@/components/ui/Button";
 import { NewFloorPlanForm } from "@/components/planner/NewFloorPlanForm";
 
 export default async function PlannerFloorPlansPage() {
-  const plans = getFloorPlans();
+  const plans = await getFloorPlans();
   const templates = plans.filter((p) => p.isTemplate);
   const eventPlans = plans.filter((p) => !p.isTemplate);
-  const events = getEvents();
+  const events = await getEvents();
 
   return (
     <div className="ef-fade-in space-y-6">

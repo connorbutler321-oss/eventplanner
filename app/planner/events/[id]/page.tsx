@@ -2,7 +2,7 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import { getEventById } from "@/lib/data/events";
 import { getRegistrationsForEvent, confirmedCount, waitlistCount } from "@/lib/data/registrations";
-import { getAttendeeById } from "@/lib/data/attendees";
+import { getAttendees } from "@/lib/data/attendees";
 import { getFloorPlanById } from "@/lib/data/floorplans";
 import {
   adminCancelRegistrationAction,
@@ -23,13 +23,16 @@ export default async function PlannerEventDetailPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
-  const event = getEventById(id);
+  const event = await getEventById(id);
   if (!event) notFound();
 
-  const registrations = getRegistrationsForEvent(id).sort((a, b) => a.createdAt.localeCompare(b.createdAt));
-  const plan = getFloorPlanById(event.floorPlanId);
-  const confirmed = confirmedCount(id);
-  const waitlisted = waitlistCount(id);
+  const registrations = (await getRegistrationsForEvent(id)).sort((a, b) =>
+    a.createdAt.localeCompare(b.createdAt)
+  );
+  const plan = await getFloorPlanById(event.floorPlanId);
+  const confirmed = await confirmedCount(id);
+  const waitlisted = await waitlistCount(id);
+  const attendees = new Map((await getAttendees()).map((a) => [a.id, a]));
 
   const nextStatusOptions: RegistrationStatus[] = ["Attended", "No-show"];
 
@@ -78,7 +81,7 @@ export default async function PlannerEventDetailPage({
             </thead>
             <tbody>
               {registrations.map((r) => {
-                const attendee = getAttendeeById(r.attendeeId);
+                const attendee = attendees.get(r.attendeeId);
                 const space = plan?.spaces.find((s) => s.id === r.boothId);
                 const cancelable = r.status !== "Canceled";
                 return (

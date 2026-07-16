@@ -20,14 +20,14 @@ export async function getSessionUser(): Promise<User | null> {
   const store = await cookies();
   const userId = store.get(SESSION_COOKIE)?.value;
   if (!userId) return null;
-  return getUserById(userId) ?? null;
+  return (await getUserById(userId)) ?? null;
 }
 
 export async function getDeviceUser(): Promise<User | null> {
   const store = await cookies();
   const userId = store.get(DEVICE_COOKIE)?.value;
   if (!userId) return null;
-  return getUserById(userId) ?? null;
+  return (await getUserById(userId)) ?? null;
 }
 
 export async function startSession(userId: string): Promise<void> {

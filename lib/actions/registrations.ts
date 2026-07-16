@@ -23,7 +23,7 @@ export async function registerForEventAction(
   const user = await getSessionUser();
   if (!user) redirect("/login");
 
-  const event = getEventById(eventId);
+  const event = await getEventById(eventId);
   if (!event) return { error: "This event no longer exists." };
 
   const name = String(formData.get("contactName") ?? "").trim();
@@ -40,10 +40,10 @@ export async function registerForEventAction(
     return { error: "Please fill in all required fields." };
   }
 
-  const attendee = findOrCreateAttendeeByEmail({ name, businessName, email, phone, category });
+  const attendee = await findOrCreateAttendeeByEmail({ name, businessName, email, phone, category });
 
   try {
-    createRegistration({
+    await createRegistration({
       eventId,
       attendeeId: attendee.id,
       boothId,
@@ -60,14 +60,14 @@ export async function registerForEventAction(
 }
 
 export async function cancelMyRegistrationAction(registrationId: string): Promise<void> {
-  cancelRegistration(registrationId);
+  await cancelRegistration(registrationId);
   revalidatePath("/vendor/my-registrations");
   revalidatePath("/vendor");
   revalidatePath("/planner");
 }
 
 export async function adminCancelRegistrationAction(eventId: string, registrationId: string): Promise<void> {
-  cancelRegistration(registrationId);
+  await cancelRegistration(registrationId);
   revalidatePath(`/planner/events/${eventId}`);
   revalidatePath("/planner");
   revalidatePath("/vendor/my-registrations");
@@ -78,7 +78,7 @@ export async function adminSetRegistrationStatusAction(
   registrationId: string,
   status: RegistrationStatus
 ): Promise<void> {
-  setRegistrationStatus(registrationId, status);
+  await setRegistrationStatus(registrationId, status);
   revalidatePath(`/planner/events/${eventId}`);
   revalidatePath("/planner");
   revalidatePath("/vendor/my-registrations");
