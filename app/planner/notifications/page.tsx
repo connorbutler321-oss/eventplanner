@@ -1,7 +1,7 @@
 import { getNotifications } from "@/lib/data/notifications";
-import { getRegistrationById } from "@/lib/data/registrations";
-import { getEventById } from "@/lib/data/events";
-import { getAttendeeById } from "@/lib/data/attendees";
+import { getRegistrations } from "@/lib/data/registrations";
+import { getEvents } from "@/lib/data/events";
+import { getAttendees } from "@/lib/data/attendees";
 import { Card, CardBody } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
 
@@ -14,7 +14,10 @@ const typeTone = {
 } as const;
 
 export default async function PlannerNotificationsPage() {
-  const notifications = getNotifications();
+  const notifications = await getNotifications();
+  const registrations = new Map((await getRegistrations()).map((r) => [r.id, r]));
+  const events = new Map((await getEvents()).map((e) => [e.id, e]));
+  const attendees = new Map((await getAttendees()).map((a) => [a.id, a]));
 
   return (
     <div className="ef-fade-in">
@@ -29,9 +32,9 @@ export default async function PlannerNotificationsPage() {
 
       <div className="space-y-3">
         {notifications.map((n) => {
-          const registration = getRegistrationById(n.registrationId);
-          const event = registration ? getEventById(registration.eventId) : undefined;
-          const attendee = registration ? getAttendeeById(registration.attendeeId) : undefined;
+          const registration = registrations.get(n.registrationId);
+          const event = registration ? events.get(registration.eventId) : undefined;
+          const attendee = registration ? attendees.get(registration.attendeeId) : undefined;
           return (
             <Card key={n.id}>
               <CardBody className="p-4">

@@ -9,10 +9,10 @@ export default async function PlannerFloorPlanEditorPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
-  const plan = getFloorPlanById(id);
+  const plan = await getFloorPlanById(id);
   if (!plan) notFound();
 
-  const usedByEvent = getEvents().find((e) => e.floorPlanId === plan.id);
+  const usedByEvent = (await getEvents()).find((e) => e.floorPlanId === plan.id);
 
   return (
     <div className="ef-fade-in">

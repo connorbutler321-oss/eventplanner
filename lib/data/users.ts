@@ -1,62 +1,93 @@
-import { store, nextId } from "./store";
+import { db, nextId } from "./db";
 import type { Role, User } from "@/lib/types";
 
-export function getUsers(): User[] {
-  return store.users;
+/* eslint-disable @typescript-eslint/no-explicit-any */
+function mapUser(row: any): User {
+  return {
+    id: row.id,
+    name: row.name,
+    email: row.email,
+    password: row.password,
+    pin: row.pin,
+    role: row.role,
+    attendeeId: row.attendee_id ?? undefined,
+    createdAt: row.created_at,
+    lastLogin: row.last_login ?? undefined,
+  };
 }
 
-export function getUserById(id: string): User | undefined {
-  return store.users.find((u) => u.id === id);
+export async function getUsers(): Promise<User[]> {
+  const sql = await db();
+  const rows = await sql`SELECT * FROM users ORDER BY created_at, id`;
+  return rows.map(mapUser);
 }
 
-export function getUserByEmail(email: string): User | undefined {
-  return store.users.find((u) => u.email.toLowerCase() === email.toLowerCase());
+export async function getUserById(id: string): Promise<User | undefined> {
+  const sql = await db();
+  const rows = await sql`SELECT * FROM users WHERE id = ${id}`;
+  return rows[0] ? mapUser(rows[0]) : undefined;
 }
 
-export function verifyPassword(email: string, password: string): User | null {
-  const user = getUserByEmail(email);
+export async function getUserByEmail(email: string): Promise<User | undefined> {
+  const sql = await db();
+  const rows = await sql`SELECT * FROM users WHERE lower(email) = lower(${email})`;
+  return rows[0] ? mapUser(rows[0]) : undefined;
+}
+
+async function touchLastLogin(userId: string): Promise<string> {
+  const sql = await db();
+  const now = new Date().toISOString();
+  await sql`UPDATE users SET last_login = ${now} WHERE id = ${userId}`;
+  return now;
+}
+
+export async function verifyPassword(email: string, password: string): Promise<User | null> {
+  const user = await getUserByEmail(email);
   if (!user || user.password !== password) return null;
-  user.lastLogin = new Date().toISOString();
+  user.lastLogin = await touchLastLogin(user.id);
   return user;
 }
 
-export function verifyPin(userId: string, pin: string): User | null {
-  const user = getUserById(userId);
+export async function verifyPin(userId: string, pin: string): Promise<User | null> {
+  const user = await getUserById(userId);
   if (!user || user.pin !== pin) return null;
-  user.lastLogin = new Date().toISOString();
+  user.lastLogin = await touchLastLogin(user.id);
   return user;
 }
 
-export function createUser(input: {
+export async function createUser(input: {
   name: string;
   email: string;
   password: string;
   pin: string;
   role: Role;
   attendeeId?: string;
-}): User {
+}): Promise<User> {
   const user: User = {
     id: nextId("u"),
     createdAt: new Date().toISOString(),
     ...input,
   };
-  store.users.push(user);
+  const sql = await db();
+  await sql`INSERT INTO users (id, name, email, password, pin, role, attendee_id, created_at)
+    VALUES (${user.id}, ${user.name}, ${user.email}, ${user.password}, ${user.pin}, ${user.role}, ${user.attendeeId ?? null}, ${user.createdAt})`;
   return user;
 }
 
-export function updateUser(
+export async function updateUser(
   id: string,
   patch: Partial<Pick<User, "name" | "role" | "pin" | "password">>
-): User | null {
-  const user = getUserById(id);
-  if (!user) return null;
-  Object.assign(user, patch);
-  return user;
+): Promise<User | null> {
+  const existing = await getUserById(id);
+  if (!existing) return null;
+  const merged = { ...existing, ...patch };
+  const sql = await db();
+  await sql`UPDATE users SET name = ${merged.name}, role = ${merged.role}, pin = ${merged.pin}, password = ${merged.password} WHERE id = ${id}`;
+  return merged;
 }
 
-export function deleteUser(id: string): boolean {
-  const idx = store.users.findIndex((u) => u.id === id);
-  if (idx === -1) return false;
-  store.users.splice(idx, 1);
-  return true;
+export async function deleteUser(id: string): Promise<boolean> {
+  const sql = await db();
+  const rows = await sql`DELETE FROM users WHERE id = ${id} RETURNING id`;
+  return rows.length > 0;
 }

@@ -21,27 +21,27 @@ export async function createUserAction(
   if (!/^\d{4,6}$/.test(pin)) {
     return { error: "PIN must be 4-6 digits." };
   }
-  if (getUserByEmail(email)) {
+  if (await getUserByEmail(email)) {
     return { error: "A user with this email already exists." };
   }
 
-  createUser({ name, email, password: "password123", pin, role });
+  await createUser({ name, email, password: "password123", pin, role });
   revalidatePath("/planner/users");
   return undefined;
 }
 
 export async function updateUserRoleAction(userId: string, role: Role): Promise<void> {
-  updateUser(userId, { role });
+  await updateUser(userId, { role });
   revalidatePath("/planner/users");
 }
 
 export async function resetUserPinAction(userId: string, pin: string): Promise<void> {
   if (!/^\d{4,6}$/.test(pin)) return;
-  updateUser(userId, { pin });
+  await updateUser(userId, { pin });
   revalidatePath("/planner/users");
 }
 
 export async function deleteUserAction(userId: string): Promise<void> {
-  deleteUser(userId);
+  await deleteUser(userId);
   revalidatePath("/planner/users");
 }

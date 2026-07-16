@@ -31,11 +31,11 @@ export async function createEventAction(
   const templateId = String(formData.get("templateId") ?? "");
   let floorPlanId: string | undefined;
   if (templateId) {
-    const plan = cloneFloorPlanFromTemplate(templateId, `${fields.name} Layout`);
+    const plan = await cloneFloorPlanFromTemplate(templateId, `${fields.name} Layout`);
     floorPlanId = plan.id;
   }
 
-  const event = createEvent({ ...fields, floorPlanId });
+  const event = await createEvent({ ...fields, floorPlanId });
   revalidatePath("/planner/events");
   revalidatePath("/planner");
   redirect(`/planner/events/${event.id}`);
@@ -51,7 +51,7 @@ export async function updateEventAction(
     return { error: "Please fill in all required fields with a capacity greater than 0." };
   }
 
-  updateEvent(eventId, fields);
+  await updateEvent(eventId, fields);
   revalidatePath(`/planner/events/${eventId}`);
   revalidatePath("/planner/events");
   revalidatePath("/planner");
@@ -59,7 +59,7 @@ export async function updateEventAction(
 }
 
 export async function setEventStatusAction(eventId: string, status: EventStatus): Promise<void> {
-  updateEvent(eventId, { status });
+  await updateEvent(eventId, { status });
   revalidatePath(`/planner/events/${eventId}`);
   revalidatePath("/planner/events");
   revalidatePath("/planner");

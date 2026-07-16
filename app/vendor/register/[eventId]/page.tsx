@@ -15,14 +15,14 @@ export default async function VendorRegisterPage({
 }) {
   const { eventId } = await params;
   const { boothId } = await searchParams;
-  const event = getEventById(eventId);
+  const event = await getEventById(eventId);
   if (!event) notFound();
 
-  const plan = getFloorPlanById(event.floorPlanId);
+  const plan = await getFloorPlanById(event.floorPlanId);
   const booth = boothId ? plan?.spaces.find((s) => s.id === boothId) : undefined;
 
   const user = await getSessionUser();
-  const defaultAttendee = user?.attendeeId ? getAttendeeById(user.attendeeId) : undefined;
+  const defaultAttendee = user?.attendeeId ? await getAttendeeById(user.attendeeId) : undefined;
 
   return (
     <div className="ef-fade-in">

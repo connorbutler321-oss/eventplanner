@@ -6,13 +6,13 @@ import { createFloorPlan, cloneFloorPlanFromTemplate, updateFloorPlan } from "@/
 import type { FloorPlanSpace } from "@/lib/types";
 
 export async function createBlankFloorPlanAction(name: string): Promise<void> {
-  const plan = createFloorPlan({ name, isTemplate: false, canvasWidth: 560, canvasHeight: 360, spaces: [] });
+  const plan = await createFloorPlan({ name, isTemplate: false, canvasWidth: 560, canvasHeight: 360, spaces: [] });
   revalidatePath("/planner/floorplans");
   redirect(`/planner/floorplans/${plan.id}`);
 }
 
 export async function createFloorPlanFromTemplateAction(templateId: string, name: string): Promise<void> {
-  const plan = cloneFloorPlanFromTemplate(templateId, name);
+  const plan = await cloneFloorPlanFromTemplate(templateId, name);
   revalidatePath("/planner/floorplans");
   redirect(`/planner/floorplans/${plan.id}`);
 }
@@ -27,7 +27,7 @@ export async function saveFloorPlanAction(
     spaces: FloorPlanSpace[];
   }
 ): Promise<{ ok: true }> {
-  updateFloorPlan(planId, input);
+  await updateFloorPlan(planId, input);
   revalidatePath(`/planner/floorplans/${planId}`);
   revalidatePath("/planner/floorplans");
   revalidatePath("/vendor");

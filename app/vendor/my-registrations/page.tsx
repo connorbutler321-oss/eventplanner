@@ -1,7 +1,7 @@
 import { getSessionUser } from "@/lib/auth";
 import { getRegistrationsForAttendee } from "@/lib/data/registrations";
-import { getEventById } from "@/lib/data/events";
-import { getFloorPlanById } from "@/lib/data/floorplans";
+import { getEvents } from "@/lib/data/events";
+import { getFloorPlans } from "@/lib/data/floorplans";
 import { cancelMyRegistrationAction } from "@/lib/actions/registrations";
 import { Card, CardBody } from "@/components/ui/Card";
 import { RegistrationStatusBadge } from "@/components/ui/Badge";
@@ -9,7 +9,9 @@ import { ConfirmButton } from "@/components/ui/ConfirmButton";
 
 export default async function MyRegistrationsPage() {
   const user = await getSessionUser();
-  const registrations = user?.attendeeId ? getRegistrationsForAttendee(user.attendeeId) : [];
+  const registrations = user?.attendeeId ? await getRegistrationsForAttendee(user.attendeeId) : [];
+  const events = new Map((await getEvents()).map((e) => [e.id, e]));
+  const plans = new Map((await getFloorPlans()).map((p) => [p.id, p]));
 
   return (
     <div className="ef-fade-in">
@@ -20,8 +22,8 @@ export default async function MyRegistrationsPage() {
 
       <div className="space-y-3">
         {registrations.map((r) => {
-          const event = getEventById(r.eventId);
-          const plan = getFloorPlanById(event?.floorPlanId);
+          const event = events.get(r.eventId);
+          const plan = event?.floorPlanId ? plans.get(event.floorPlanId) : undefined;
           const space = plan?.spaces.find((s) => s.id === r.boothId);
           const cancelable = r.status === "Confirmed" || r.status === "Waitlisted" || r.status === "Promoted";
           return (

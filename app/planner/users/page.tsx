@@ -10,7 +10,7 @@ export default async function PlannerUsersPage() {
   if (!currentUser) redirect("/login");
   if (currentUser.role !== "admin") redirect("/planner");
 
-  const users = getUsers();
+  const users = await getUsers();
   const staffUsers = users.filter((u) => u.role !== "vendor");
   const vendorUsers = users.filter((u) => u.role === "vendor");
 

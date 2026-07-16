@@ -5,7 +5,10 @@ import { EventStatusBadge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
 
 export default async function VendorEventListPage() {
-  const events = getOpenEvents();
+  const events = await getOpenEvents();
+  const rows = await Promise.all(
+    events.map(async (event) => ({ event, confirmed: await confirmedCount(event.id) }))
+  );
 
   return (
     <div className="ef-fade-in">
@@ -17,8 +20,7 @@ export default async function VendorEventListPage() {
       </div>
 
       <div className="grid gap-4 sm:grid-cols-2">
-        {events.map((event) => {
-          const confirmed = confirmedCount(event.id);
+        {rows.map(({ event, confirmed }) => {
           const spotsLeft = Math.max(event.capacity - confirmed, 0);
           return (
             <Card key={event.id} className="flex flex-col">
