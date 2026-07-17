@@ -83,7 +83,16 @@ export interface NotificationRecord {
   sentAt: string;
 }
 
-export type SpaceType = "booth" | "table" | "stage" | "walkway" | "entrance";
+export type SpaceType =
+  | "booth"
+  | "table" // rectangular table
+  | "roundtable"
+  | "chair"
+  | "door"
+  | "wall"
+  | "stage"
+  | "walkway"
+  | "entrance";
 export type SpaceStatus = "available" | "reserved" | "blocked";
 
 export interface FloorPlanSpace {
