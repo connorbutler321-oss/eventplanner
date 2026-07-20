@@ -30,7 +30,7 @@ function IconMoon() {
  * React state (and no hydration flash) is involved. The pre-paint script in the
  * root layout applies the saved value before first render.
  */
-export function ThemeToggle() {
+export function ThemeToggle({ variant = "surface" }: { variant?: "surface" | "onColor" }) {
   function toggle() {
     const root = document.documentElement;
     const next = !root.classList.contains("dark");
@@ -42,13 +42,18 @@ export function ThemeToggle() {
     }
   }
 
+  const styles =
+    variant === "onColor"
+      ? "border-white/25 bg-white/10 text-white hover:bg-white/20"
+      : "border-border-strong bg-surface text-foreground shadow-xs hover:bg-surface-muted";
+
   return (
     <button
       type="button"
       onClick={toggle}
       aria-label="Toggle light/dark theme"
       title="Toggle light/dark theme"
-      className="flex h-9 w-9 items-center justify-center rounded-lg border border-border-strong bg-surface text-foreground shadow-xs transition-colors hover:bg-surface-muted"
+      className={`flex h-9 w-9 items-center justify-center rounded-lg border transition-colors ${styles}`}
     >
       <span className="dark:hidden">
         <IconMoon />
