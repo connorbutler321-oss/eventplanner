@@ -33,6 +33,13 @@ export default function LoginPage() {
               <li>staff@lipscomb.edu — Staff</li>
               <li>vendor@lipscomb.edu — Vendor (Lee&apos;s BBQ Co.)</li>
             </ul>
+            <p className="mt-3 mb-2 font-semibold text-heading">Team accounts (Admin)</p>
+            <ul className="space-y-1">
+              <li>rastillman@mail.lipscomb.edu — Richard Stillman</li>
+              <li>kyletavi@gmail.com — Kyle Tavi</li>
+              <li>georgec4444@yahoo.com — George Carlson</li>
+              <li>cjbutler@lipscomb.edu — Connor Butler</li>
+            </ul>
             <p className="mt-2 text-muted-foreground">
               After your first sign-in, this device will offer a quick PIN unlock instead.
             </p>
