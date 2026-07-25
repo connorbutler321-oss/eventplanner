@@ -31,9 +31,12 @@ export default function RootLayout({
     >
       <head>
         <script
-          // Apply the saved theme before first paint to avoid a flash of the wrong theme.
+          // Apply the theme before first paint to avoid a flash of the wrong theme.
+          // An explicit choice from the toggle always wins; with no saved choice
+          // we follow the operating system's prefers-color-scheme setting, so
+          // someone running their machine in dark mode isn't forced into light.
           dangerouslySetInnerHTML={{
-            __html: `(function(){try{var t=localStorage.getItem('ef-theme');if(t==='dark')document.documentElement.classList.add('dark');}catch(e){}})();`,
+            __html: `(function(){try{var t=localStorage.getItem('ef-theme');var d=t?t==='dark':window.matchMedia('(prefers-color-scheme: dark)').matches;if(d)document.documentElement.classList.add('dark');}catch(e){}})();`,
           }}
         />
       </head>
