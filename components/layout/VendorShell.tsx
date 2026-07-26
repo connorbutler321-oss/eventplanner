@@ -2,6 +2,7 @@ import type { User } from "@/lib/types";
 import { exitVendorPreviewAction, lockScreenAction, logoutAction } from "@/lib/actions/auth";
 import { Button } from "@/components/ui/Button";
 import { TopNavItem } from "@/components/layout/TopNavItem";
+import { ThemeToggle } from "@/components/layout/ThemeToggle";
 import { IconStore, IconClipboard } from "@/components/ui/icons";
 
 const NAV_ITEMS = [
@@ -56,6 +57,7 @@ export function VendorShell({
               <p className="text-sm font-semibold">{user.name}</p>
               <p className="text-xs text-lu-purple-200">{businessName ?? "Vendor"}</p>
             </div>
+            <ThemeToggle variant="onColor" />
             {!isStaffPreview && (
               <>
                 <form action={lockScreenAction}>
