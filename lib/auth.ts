@@ -58,6 +58,21 @@ export function homePathForRole(role: User["role"]): string {
   return role === "vendor" ? "/vendor" : "/planner";
 }
 
+/**
+ * Authorization guard for admin-only Server Actions.
+ *
+ * Hiding a nav item or redirecting away from a page is presentation, not a
+ * security boundary: a Server Action is a POST endpoint that any signed-in
+ * session can reach without ever loading the UI that renders it. Every
+ * admin-only mutation must call this first.
+ */
+export async function requireAdmin(): Promise<User> {
+  const user = await getSessionUser();
+  if (!user) throw new Error("Unauthorized");
+  if (user.role !== "admin") throw new Error("Forbidden");
+  return user;
+}
+
 export async function isPreviewingVendor(): Promise<boolean> {
   const store = await cookies();
   return store.get("ef_preview")?.value === "vendor";

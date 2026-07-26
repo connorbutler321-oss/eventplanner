@@ -1,5 +1,5 @@
 import Link from "next/link";
-import type { User } from "@/lib/types";
+import type { Role, User } from "@/lib/types";
 import { enterVendorPreviewAction, lockScreenAction, logoutAction } from "@/lib/actions/auth";
 import { Button } from "@/components/ui/Button";
 import { NavItem } from "@/components/layout/NavItem";
@@ -13,17 +13,30 @@ import {
   IconBell,
 } from "@/components/ui/icons";
 
-const NAV_ITEMS = [
+interface NavEntry {
+  href: string;
+  label: string;
+  icon: React.ReactNode;
+  exact?: boolean;
+  /** Roles allowed to see this item. Omit to show it to every planner-side role. */
+  roles?: Role[];
+}
+
+// Keep `roles` in sync with the guard on the destination page. "Users & Access"
+// is admin-only in app/planner/users/page.tsx, so listing it for every role left
+// planner and staff with a tab that bounced them back to the dashboard.
+const NAV_ITEMS: NavEntry[] = [
   { href: "/planner", label: "Dashboard", icon: <IconDashboard size={18} />, exact: true },
   { href: "/planner/events", label: "Events", icon: <IconCalendar size={18} /> },
   { href: "/planner/floorplans", label: "Floor Plans", icon: <IconMap size={18} /> },
   { href: "/planner/vendors", label: "Vendors", icon: <IconStore size={18} /> },
-  { href: "/planner/users", label: "Users & Access", icon: <IconUsers size={18} /> },
+  { href: "/planner/users", label: "Users & Access", icon: <IconUsers size={18} />, roles: ["admin"] },
   { href: "/planner/notifications", label: "Notifications", icon: <IconBell size={18} /> },
 ];
 
 export function PlannerShell({ user, children }: { user: User; children: React.ReactNode }) {
   const canPreviewVendor = user.role === "admin" || user.role === "planner";
+  const navItems = NAV_ITEMS.filter((item) => !item.roles || item.roles.includes(user.role));
 
   return (
     <div className="flex min-h-screen bg-background">
@@ -41,7 +54,7 @@ export function PlannerShell({ user, children }: { user: User; children: React.R
           Menu
         </p>
         <nav className="flex-1 space-y-1 px-3">
-          {NAV_ITEMS.map((item) => (
+          {navItems.map((item) => (
             <NavItem key={item.href} {...item} />
           ))}
         </nav>
@@ -88,7 +101,7 @@ export function PlannerShell({ user, children }: { user: User; children: React.R
           </div>
         </header>
         <nav className="flex gap-1 overflow-x-auto border-b border-border bg-surface px-4 py-2 md:hidden">
-          {NAV_ITEMS.map((item) => (
+          {navItems.map((item) => (
             <Link
               key={item.href}
               href={item.href}
