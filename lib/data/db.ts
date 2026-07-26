@@ -116,37 +116,123 @@ async function createSchemaAndSeed(): Promise<void> {
     done BOOLEAN NOT NULL DEFAULT FALSE,
     event_id TEXT
   )`;
+  // Ledger of seed records already applied to this database. Seeding is keyed
+  // off this rather than "is the database empty?", so that seed entries added
+  // later (e.g. a new team login) still reach an existing database, while a
+  // record deleted through the app stays deleted instead of reappearing.
+  await sql`CREATE TABLE IF NOT EXISTS seed_history (
+    seed_key TEXT PRIMARY KEY,
+    applied_at TEXT NOT NULL
+  )`;
 
-  // Seed demo data once, on an empty database. Preview-branch databases are
-  // copies of production, so they arrive already populated and skip this.
-  const [{ count }] = (await sql`SELECT count(*)::int AS count FROM users`) as { count: number }[];
-  if (count > 0) return;
+  const appliedRows = (await sql`SELECT seed_key FROM seed_history`) as { seed_key: string }[];
+  const applied = new Set(appliedRows.map((r) => r.seed_key));
+  const newKeys: string[] = [];
 
-  for (const u of seedUsers()) {
+  // Rows are inserted one statement per table (via jsonb_to_recordset) rather
+  // than one statement per row: seeding a fresh database is ~5 round trips
+  // instead of ~30, which keeps it well inside a serverless request budget.
+  function unapplied<T>(prefix: string, rows: T[], id: (row: T) => string): T[] {
+    return rows.filter((row) => {
+      const key = `${prefix}:${id(row)}`;
+      if (applied.has(key)) return false;
+      newKeys.push(key);
+      return true;
+    });
+  }
+
+  const users = unapplied("user", seedUsers(), (u) => u.id).map((u) => ({
+    id: u.id,
+    name: u.name,
+    email: u.email,
+    password: u.password,
+    pin: u.pin,
+    role: u.role,
+    attendee_id: u.attendeeId ?? null,
+    created_at: u.createdAt,
+    last_login: u.lastLogin ?? null,
+  }));
+  if (users.length) {
     await sql`INSERT INTO users (id, name, email, password, pin, role, attendee_id, created_at, last_login)
-      VALUES (${u.id}, ${u.name}, ${u.email}, ${u.password}, ${u.pin}, ${u.role}, ${u.attendeeId ?? null}, ${u.createdAt}, ${u.lastLogin ?? null})
+      SELECT id, name, email, password, pin, role, attendee_id, created_at, last_login
+      FROM jsonb_to_recordset(${JSON.stringify(users)}::jsonb)
+      AS x(id text, name text, email text, password text, pin text, role text, attendee_id text, created_at text, last_login text)
       ON CONFLICT (id) DO NOTHING`;
   }
-  for (const a of seedAttendees()) {
+
+  const attendees = unapplied("attendee", seedAttendees(), (a) => a.id).map((a) => ({
+    id: a.id,
+    name: a.name,
+    business_name: a.businessName ?? null,
+    email: a.email,
+    phone: a.phone,
+    category: a.category,
+  }));
+  if (attendees.length) {
     await sql`INSERT INTO attendees (id, name, business_name, email, phone, category)
-      VALUES (${a.id}, ${a.name}, ${a.businessName ?? null}, ${a.email}, ${a.phone}, ${a.category})
+      SELECT id, name, business_name, email, phone, category
+      FROM jsonb_to_recordset(${JSON.stringify(attendees)}::jsonb)
+      AS x(id text, name text, business_name text, email text, phone text, category text)
       ON CONFLICT (id) DO NOTHING`;
   }
-  for (const e of seedEvents()) {
+
+  const events = unapplied("event", seedEvents(), (e) => e.id).map((e) => ({
+    id: e.id,
+    name: e.name,
+    description: e.description,
+    category: e.category,
+    date: e.date,
+    location: e.location,
+    capacity: e.capacity,
+    status: e.status,
+    floor_plan_id: e.floorPlanId ?? null,
+    created_at: e.createdAt,
+  }));
+  if (events.length) {
     await sql`INSERT INTO events (id, name, description, category, date, location, capacity, status, floor_plan_id, created_at)
-      VALUES (${e.id}, ${e.name}, ${e.description}, ${e.category}, ${e.date}, ${e.location}, ${e.capacity}, ${e.status}, ${e.floorPlanId ?? null}, ${e.createdAt})
+      SELECT id, name, description, category, date, location, capacity, status, floor_plan_id, created_at
+      FROM jsonb_to_recordset(${JSON.stringify(events)}::jsonb)
+      AS x(id text, name text, description text, category text, date text, location text, capacity int, status text, floor_plan_id text, created_at text)
       ON CONFLICT (id) DO NOTHING`;
   }
-  for (const f of seedFloorPlans()) {
+
+  const floorPlans = unapplied("floorplan", seedFloorPlans(), (f) => f.id).map((f) => ({
+    id: f.id,
+    name: f.name,
+    is_template: f.isTemplate,
+    background_image_url: f.backgroundImageUrl ?? null,
+    canvas_width: f.canvasWidth,
+    canvas_height: f.canvasHeight,
+    spaces: f.spaces,
+  }));
+  if (floorPlans.length) {
     await sql`INSERT INTO floor_plans (id, name, is_template, background_image_url, canvas_width, canvas_height, spaces)
-      VALUES (${f.id}, ${f.name}, ${f.isTemplate}, ${f.backgroundImageUrl ?? null}, ${f.canvasWidth}, ${f.canvasHeight}, ${JSON.stringify(f.spaces)}::jsonb)
+      SELECT id, name, is_template, background_image_url, canvas_width, canvas_height, spaces
+      FROM jsonb_to_recordset(${JSON.stringify(floorPlans)}::jsonb)
+      AS x(id text, name text, is_template boolean, background_image_url text, canvas_width int, canvas_height int, spaces jsonb)
       ON CONFLICT (id) DO NOTHING`;
   }
-  for (const t of seedTasks()) {
+
+  const tasks = unapplied("task", seedTasks(), (t) => t.id).map((t) => ({
+    id: t.id,
+    title: t.title,
+    detail: t.detail,
+    done: t.done,
+    event_id: t.eventId ?? null,
+  }));
+  if (tasks.length) {
     await sql`INSERT INTO tasks (id, title, detail, done, event_id)
-      VALUES (${t.id}, ${t.title}, ${t.detail}, ${t.done}, ${t.eventId ?? null})
+      SELECT id, title, detail, done, event_id
+      FROM jsonb_to_recordset(${JSON.stringify(tasks)}::jsonb)
+      AS x(id text, title text, detail text, done boolean, event_id text)
       ON CONFLICT (id) DO NOTHING`;
   }
+
+  if (newKeys.length === 0) return;
+  // Record in one statement so the ledger costs a single round trip.
+  await sql`INSERT INTO seed_history (seed_key, applied_at)
+    SELECT unnest(${newKeys}::text[]), ${new Date().toISOString()}
+    ON CONFLICT (seed_key) DO NOTHING`;
 }
 
 function ensureDb(): Promise<void> {
