@@ -1,4 +1,5 @@
 import { LoginForm } from "@/components/auth/LoginForm";
+import { ThemeToggle } from "@/components/layout/ThemeToggle";
 import { Card, CardBody } from "@/components/ui/Card";
 
 export default function LoginPage() {
@@ -7,6 +8,11 @@ export default function LoginPage() {
       {/* ambient glows */}
       <div className="pointer-events-none absolute -left-24 top-1/4 h-96 w-96 rounded-full bg-lu-purple-500/30 blur-3xl" />
       <div className="pointer-events-none absolute -right-20 bottom-0 h-80 w-80 rounded-full bg-lu-gold-500/15 blur-3xl" />
+
+      {/* Signed-out users have no shell, so the theme control lives on the page itself. */}
+      <div className="absolute right-4 top-4 z-10">
+        <ThemeToggle variant="onColor" />
+      </div>
 
       <div className="relative w-full max-w-md">
         <div className="mb-8 text-center">
