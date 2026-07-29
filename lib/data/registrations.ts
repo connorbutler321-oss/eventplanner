@@ -209,3 +209,36 @@ export async function setRegistrationStatus(
   const rows = await sql`UPDATE registrations SET status = ${status}, updated_at = ${now} WHERE id = ${id} RETURNING *`;
   return rows[0] ? mapRegistration(rows[0]) : null;
 }
+
+export interface EventAttendeeListEntry {
+  name: string;
+  businessName?: string;
+  category: string;
+}
+
+export interface EventAttendeeList {
+  visible: EventAttendeeListEntry[];
+  hiddenCount: number;
+}
+
+/**
+ * Who's attending an event, as shown to other registered vendors (#22).
+ * Every non-canceled registration counts toward the list; attendees who
+ * turned off "show me on attendee lists" are tallied but never named.
+ */
+export async function getEventAttendeeList(eventId: string): Promise<EventAttendeeList> {
+  const sql = await db();
+  const rows = await sql`SELECT a.name, a.business_name, a.category, a.list_visible
+    FROM registrations r
+    JOIN attendees a ON a.id = r.attendee_id
+    WHERE r.event_id = ${eventId} AND r.status <> 'Canceled'
+    ORDER BY coalesce(a.business_name, a.name)`;
+  const visible = rows
+    .filter((row) => row.list_visible !== false)
+    .map((row) => ({
+      name: row.name as string,
+      businessName: (row.business_name as string | null) ?? undefined,
+      category: row.category as string,
+    }));
+  return { visible, hiddenCount: rows.length - visible.length };
+}

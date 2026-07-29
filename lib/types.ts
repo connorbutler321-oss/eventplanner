@@ -61,6 +61,8 @@ export interface Attendee {
   email: string;
   phone: string;
   category: string;
+    /** Whether this attendee appears on event attendee lists other vendors can see. Absent means true (opt-out default). */
+  listVisible?: boolean;
 }
 
 export interface Registration {

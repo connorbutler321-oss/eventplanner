@@ -3,7 +3,7 @@
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import { getSessionUser } from "@/lib/auth";
-import { findOrCreateAttendeeByEmail } from "@/lib/data/attendees";
+import { findOrCreateAttendeeByEmail, setAttendeeVisibility } from "@/lib/data/attendees";
 import {
   createRegistration,
   cancelRegistration,
@@ -57,6 +57,17 @@ export async function registerForEventAction(
   revalidatePath("/vendor");
   revalidatePath("/planner");
   redirect("/vendor/my-registrations");
+}
+
+export async function setMyListVisibilityAction(visible: boolean): Promise<void> {
+  // Scoped to the signed-in vendor's own attendee record — the id is taken
+  // from the session, never from the caller, so a vendor can only ever
+  // change their own visibility.
+  const user = await getSessionUser();
+  if (!user?.attendeeId) return;
+  await setAttendeeVisibility(user.attendeeId, visible);
+  revalidatePath("/vendor/my-registrations");
+  revalidatePath("/planner");
 }
 
 export async function cancelMyRegistrationAction(registrationId: string): Promise<void> {
