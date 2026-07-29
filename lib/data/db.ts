@@ -61,15 +61,17 @@ async function createSchemaAndSeed(): Promise<void> {
     attendee_id TEXT,
     created_at TEXT NOT NULL,
     last_login TEXT
-  )`;
-  await sql`CREATE TABLE IF NOT EXISTS attendees (
+  )`;  await sql`CREATE TABLE IF NOT EXISTS attendees (
     id TEXT PRIMARY KEY,
     name TEXT NOT NULL,
     business_name TEXT,
     email TEXT NOT NULL,
     phone TEXT NOT NULL,
-    category TEXT NOT NULL
+    category TEXT NOT NULL,
+    list_visible BOOLEAN NOT NULL DEFAULT TRUE
   )`;
+  // Existing databases predate the column; CREATE TABLE IF NOT EXISTS won't add it.
+  await sql`ALTER TABLE attendees ADD COLUMN IF NOT EXISTS list_visible BOOLEAN NOT NULL DEFAULT TRUE`;
   await sql`CREATE TABLE IF NOT EXISTS events (
     id TEXT PRIMARY KEY,
     name TEXT NOT NULL,

@@ -10,6 +10,7 @@ function mapAttendee(row: any): Attendee {
     email: row.email,
     phone: row.phone,
     category: row.category,
+        listVisible: row.list_visible ?? true,
   };
 }
 
@@ -41,8 +42,14 @@ export async function findOrCreateAttendeeByEmail(input: {
       RETURNING *`;
     return mapAttendee(rows[0]);
   }
-  const attendee: Attendee = { id: nextId("a"), ...input };
+    const attendee: Attendee = { id: nextId("a"), listVisible: true, ...input };
+
   await sql`INSERT INTO attendees (id, name, business_name, email, phone, category)
     VALUES (${attendee.id}, ${attendee.name}, ${attendee.businessName ?? null}, ${attendee.email}, ${attendee.phone}, ${attendee.category})`;
   return attendee;
+  }
+  /** Sets whether an attendee appears on the event attendee lists other vendors can see. */
+export async function setAttendeeVisibility(id: string, visible: boolean): Promise<void> {
+  const sql = await db();
+  await sql`UPDATE attendees SET list_visible = ${visible} WHERE id = ${id}`;
 }
