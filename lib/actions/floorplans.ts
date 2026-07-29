@@ -2,7 +2,9 @@
 
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
+import { getSessionUser, requiresApproval } from "@/lib/auth";
 import { createFloorPlan, cloneFloorPlanFromTemplate, updateFloorPlan } from "@/lib/data/floorplans";
+import { createChangeRequest } from "@/lib/data/requests";
 import type { FloorPlanSpace } from "@/lib/types";
 
 export async function createBlankFloorPlanAction(name: string): Promise<void> {
@@ -26,10 +28,25 @@ export async function saveFloorPlanAction(
     canvasHeight: number;
     spaces: FloorPlanSpace[];
   }
-): Promise<{ ok: true }> {
+): Promise<{ ok: true; queued: boolean }> {
+  const user = await getSessionUser();
+  if (!user) redirect("/login");
+
+  if (requiresApproval(user)) {
+    await createChangeRequest({
+      type: "floorplan.update",
+      requestedBy: user.id,
+      targetId: planId,
+      summary: `Edit floor plan “${input.name}”`,
+      payload: { input },
+    });
+    revalidatePath("/planner/requests");
+    return { ok: true, queued: true };
+  }
+
   await updateFloorPlan(planId, input);
   revalidatePath(`/planner/floorplans/${planId}`);
   revalidatePath("/planner/floorplans");
   revalidatePath("/vendor");
-  return { ok: true };
+  return { ok: true, queued: false };
 }

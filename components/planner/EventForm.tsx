@@ -133,6 +133,11 @@ export function EventForm({ event, templates }: { event?: EventRecord; templates
       {state?.error && (
         <p className="mb-4 rounded-lg bg-red-50 px-3 py-2 text-sm text-danger">{state.error}</p>
       )}
+      {state?.notice && (
+        <p className="mb-4 rounded-lg border border-lu-gold-500/30 bg-lu-gold-500/10 px-3 py-2 text-sm text-foreground">
+          {state.notice}
+        </p>
+      )}
 
       <Button type="submit" disabled={pending}>
         {pending ? "Saving…" : event ? "Save changes" : "Create event"}

@@ -2,11 +2,13 @@
 
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
-import { createEvent, updateEvent } from "@/lib/data/events";
+import { getSessionUser, requiresApproval } from "@/lib/auth";
+import { createEvent, updateEvent, getEventById } from "@/lib/data/events";
 import { cloneFloorPlanFromTemplate } from "@/lib/data/floorplans";
+import { createChangeRequest } from "@/lib/data/requests";
 import type { EventStatus } from "@/lib/types";
 
-export type EventFormState = { error?: string } | undefined;
+export type EventFormState = { error?: string; notice?: string } | undefined;
 
 function readEventFields(formData: FormData) {
   return {
@@ -23,12 +25,27 @@ export async function createEventAction(
   _prev: EventFormState,
   formData: FormData
 ): Promise<EventFormState> {
+  const user = await getSessionUser();
+  if (!user) redirect("/login");
+
   const fields = readEventFields(formData);
   if (!fields.name || !fields.date || !fields.location || fields.capacity <= 0) {
     return { error: "Please fill in all required fields with a capacity greater than 0." };
   }
 
-  const templateId = String(formData.get("templateId") ?? "");
+  const templateId = String(formData.get("templateId") ?? "") || undefined;
+
+  if (requiresApproval(user)) {
+    await createChangeRequest({
+      type: "event.create",
+      requestedBy: user.id,
+      summary: `Create event “${fields.name}”`,
+      payload: { fields, templateId },
+    });
+    revalidatePath("/planner/requests");
+    return { notice: "Submitted for admin approval. It will appear once an admin approves it." };
+  }
+
   let floorPlanId: string | undefined;
   if (templateId) {
     const plan = await cloneFloorPlanFromTemplate(templateId, `${fields.name} Layout`);
@@ -46,9 +63,24 @@ export async function updateEventAction(
   _prev: EventFormState,
   formData: FormData
 ): Promise<EventFormState> {
+  const user = await getSessionUser();
+  if (!user) redirect("/login");
+
   const fields = readEventFields(formData);
   if (!fields.name || !fields.date || !fields.location || fields.capacity <= 0) {
     return { error: "Please fill in all required fields with a capacity greater than 0." };
+  }
+
+  if (requiresApproval(user)) {
+    await createChangeRequest({
+      type: "event.update",
+      requestedBy: user.id,
+      targetId: eventId,
+      summary: `Edit event “${fields.name}”`,
+      payload: { fields },
+    });
+    revalidatePath("/planner/requests");
+    return { notice: "Changes submitted for admin approval. The event is unchanged until approved." };
   }
 
   await updateEvent(eventId, fields);
@@ -59,6 +91,22 @@ export async function updateEventAction(
 }
 
 export async function setEventStatusAction(eventId: string, status: EventStatus): Promise<void> {
+  const user = await getSessionUser();
+  if (!user) redirect("/login");
+
+  if (requiresApproval(user)) {
+    const event = await getEventById(eventId);
+    await createChangeRequest({
+      type: "event.status",
+      requestedBy: user.id,
+      targetId: eventId,
+      summary: `Set “${event?.name ?? "event"}” status to ${status}`,
+      payload: { status },
+    });
+    revalidatePath("/planner/requests");
+    return;
+  }
+
   await updateEvent(eventId, { status });
   revalidatePath(`/planner/events/${eventId}`);
   revalidatePath("/planner/events");

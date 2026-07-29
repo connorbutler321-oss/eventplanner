@@ -1,8 +1,13 @@
 "use client";
 
 import { useState, useTransition } from "react";
-import { updateUserRoleAction, resetUserPinAction, deleteUserAction } from "@/lib/actions/users";
-import type { Role, User } from "@/lib/types";
+import {
+  updateUserRoleAction,
+  resetUserPinAction,
+  deleteUserAction,
+  setUserAccessModeAction,
+} from "@/lib/actions/users";
+import type { AccessMode, Role, User } from "@/lib/types";
 import { Select, Input } from "@/components/ui/Field";
 import { ConfirmButton } from "@/components/ui/ConfirmButton";
 import { Badge } from "@/components/ui/Badge";
@@ -52,18 +57,33 @@ function UserRow({ user, isSelf }: { user: User; isSelf: boolean }) {
       <td className="px-4 py-3 text-muted-foreground">{user.email}</td>
       <td className="px-4 py-3">
         {isStaffRole ? (
-          <Select
-            className="w-auto"
-            defaultValue={user.role}
-            disabled={pending}
-            onChange={(e) =>
-              startTransition(() => updateUserRoleAction(user.id, e.target.value as Role))
-            }
-          >
-            <option value="admin">Admin</option>
-            <option value="planner">Event Planner</option>
-            <option value="staff">Staff</option>
-          </Select>
+          <div className="space-y-2">
+            <Select
+              className="w-auto"
+              defaultValue={user.role}
+              disabled={pending}
+              onChange={(e) =>
+                startTransition(() => updateUserRoleAction(user.id, e.target.value as Role))
+              }
+            >
+              <option value="admin">Admin</option>
+              <option value="planner">Event Planner</option>
+              <option value="staff">Staff</option>
+            </Select>
+            {user.role === "planner" && (
+              <Select
+                className="w-auto text-xs"
+                defaultValue={user.accessMode ?? "request"}
+                disabled={pending}
+                onChange={(e) =>
+                  startTransition(() => setUserAccessModeAction(user.id, e.target.value as AccessMode))
+                }
+              >
+                <option value="request">Request mode (needs approval)</option>
+                <option value="full">Full access (direct)</option>
+              </Select>
+            )}
+          </div>
         ) : (
           <Badge tone={roleTone[user.role]}>Vendor</Badge>
         )}

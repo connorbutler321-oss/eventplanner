@@ -11,6 +11,7 @@ import {
   IconStore,
   IconUsers,
   IconBell,
+  IconClipboard,
 } from "@/components/ui/icons";
 
 interface NavEntry {
@@ -30,11 +31,22 @@ const NAV_ITEMS: NavEntry[] = [
   { href: "/planner/events", label: "Events", icon: <IconCalendar size={18} /> },
   { href: "/planner/floorplans", label: "Floor Plans", icon: <IconMap size={18} /> },
   { href: "/planner/vendors", label: "Vendors", icon: <IconStore size={18} /> },
+  { href: "/planner/requests", label: "Approvals", icon: <IconClipboard size={18} />, roles: ["admin", "planner"] },
   { href: "/planner/users", label: "Users & Access", icon: <IconUsers size={18} />, roles: ["admin"] },
   { href: "/planner/notifications", label: "Notifications", icon: <IconBell size={18} /> },
 ];
 
-export function PlannerShell({ user, children }: { user: User; children: React.ReactNode }) {
+const APPROVALS_HREF = "/planner/requests";
+
+export function PlannerShell({
+  user,
+  approvalsBadge = 0,
+  children,
+}: {
+  user: User;
+  approvalsBadge?: number;
+  children: React.ReactNode;
+}) {
   const canPreviewVendor = user.role === "admin" || user.role === "planner";
   const navItems = NAV_ITEMS.filter((item) => !item.roles || item.roles.includes(user.role));
 
@@ -55,7 +67,11 @@ export function PlannerShell({ user, children }: { user: User; children: React.R
         </p>
         <nav className="flex-1 space-y-1 px-3">
           {navItems.map((item) => (
-            <NavItem key={item.href} {...item} />
+            <NavItem
+              key={item.href}
+              {...item}
+              badge={item.href === APPROVALS_HREF ? approvalsBadge : undefined}
+            />
           ))}
         </nav>
         <div className="border-t border-sidebar-border px-3 py-4">
@@ -109,6 +125,11 @@ export function PlannerShell({ user, children }: { user: User; children: React.R
             >
               <span className="[&>svg]:h-4 [&>svg]:w-4">{item.icon}</span>
               {item.label}
+              {item.href === APPROVALS_HREF && approvalsBadge > 0 && (
+                <span className="inline-flex min-w-4 items-center justify-center rounded-full bg-lu-gold-500 px-1 text-[10px] font-bold text-lu-purple-950">
+                  {approvalsBadge}
+                </span>
+              )}
             </Link>
           ))}
         </nav>

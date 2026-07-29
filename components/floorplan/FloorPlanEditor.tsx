@@ -205,15 +205,15 @@ export function FloorPlanEditor({ plan }: { plan: FloorPlan }) {
 
   function save() {
     startTransition(async () => {
-      await saveFloorPlanAction(plan.id, {
+      const result = await saveFloorPlanAction(plan.id, {
         name,
         backgroundImageUrl,
         canvasWidth: plan.canvasWidth,
         canvasHeight: plan.canvasHeight,
         spaces,
       });
-      setSavedMessage("Saved!");
-      setTimeout(() => setSavedMessage(null), 2000);
+      setSavedMessage(result.queued ? "Submitted for approval" : "Saved!");
+      setTimeout(() => setSavedMessage(null), 3000);
     });
   }
 

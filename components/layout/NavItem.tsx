@@ -15,11 +15,14 @@ export function NavItem({
   icon,
   label,
   exact,
+  badge,
 }: {
   href: string;
   icon: React.ReactNode;
   label: string;
   exact?: boolean;
+  /** Count shown as a pill on the right; hidden when falsy. */
+  badge?: number;
 }) {
   const pathname = usePathname();
   const active = exact
@@ -53,6 +56,11 @@ export function NavItem({
         {icon}
       </span>
       {label}
+      {badge ? (
+        <span className="ml-auto inline-flex min-w-5 items-center justify-center rounded-full bg-lu-gold-500 px-1.5 text-[11px] font-bold text-lu-purple-950">
+          {badge}
+        </span>
+      ) : null}
     </Link>
   );
 }

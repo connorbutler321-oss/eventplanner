@@ -73,6 +73,15 @@ export async function requireAdmin(): Promise<User> {
   return user;
 }
 
+/**
+ * True when this user's event/floor-plan changes must be queued for admin
+ * approval rather than applied directly: request-mode planners only. Admins,
+ * staff, and full-access planners apply changes immediately.
+ */
+export function requiresApproval(user: User): boolean {
+  return user.role === "planner" && user.accessMode === "request";
+}
+
 export async function isPreviewingVendor(): Promise<boolean> {
   const store = await cookies();
   return store.get("ef_preview")?.value === "vendor";

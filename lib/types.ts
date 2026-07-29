@@ -29,6 +29,11 @@ export type NotificationType =
   | "reminder"
   | "cancellation";
 
+// Planners in "request" mode have their event/floor-plan changes queued for
+// admin approval instead of applied immediately; "full" (the default for
+// non-planners) applies changes directly. See ChangeRequest below.
+export type AccessMode = "full" | "request";
+
 export interface User {
   id: string;
   name: string;
@@ -37,6 +42,7 @@ export interface User {
   pin: string; // 4-6 digit mock PIN
   role: Role;
   attendeeId?: string; // for vendor-role users, links the login to their Attendee/business profile
+  accessMode?: AccessMode; // planner-only; undefined behaves as "full"
   createdAt: string;
   lastLogin?: string;
 }
@@ -123,4 +129,24 @@ export interface TaskItem {
   detail: string;
   done: boolean;
   eventId?: string;
+}
+
+// A change proposed by a request-mode planner, awaiting an admin decision.
+// The proposed change lives entirely in `payload`; the live event/floor plan
+// is not touched until an admin approves it.
+export type ChangeRequestType = "event.create" | "event.update" | "event.status" | "floorplan.update";
+export type ChangeRequestStatus = "pending" | "approved" | "declined";
+
+export interface ChangeRequest {
+  id: string;
+  type: ChangeRequestType;
+  status: ChangeRequestStatus;
+  requestedBy: string; // user id of the planner who submitted it
+  targetId?: string; // event/floor-plan id being changed (unset for event.create)
+  summary: string; // human-readable description shown in the approvals queue
+  payload: Record<string, unknown>; // the proposed change, shape depends on `type`
+  createdAt: string;
+  decidedBy?: string; // admin user id
+  decidedAt?: string;
+  declineReason?: string;
 }
