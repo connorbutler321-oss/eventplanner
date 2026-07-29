@@ -5,6 +5,7 @@ import { getEventById } from "@/lib/data/events";
 import { getRegistrationsForEvent, confirmedCount, waitlistCount } from "@/lib/data/registrations";
 import { getAttendees } from "@/lib/data/attendees";
 import { getFloorPlanById } from "@/lib/data/floorplans";
+import { getUserById } from "@/lib/data/users";
 import {
   adminCancelRegistrationAction,
   adminSetRegistrationStatusAction,
@@ -36,6 +37,8 @@ export default async function PlannerEventDetailPage({
   const confirmed = await confirmedCount(id);
   const waitlisted = await waitlistCount(id);
   const attendees = new Map((await getAttendees()).map((a) => [a.id, a]));
+  const creator = event.createdBy ? await getUserById(event.createdBy) : undefined;
+  const createdByLabel = event.createdBy ? creator?.name ?? "Unknown user" : "Sample data";
 
   const nextStatusOptions: RegistrationStatus[] = ["Attended", "No-show"];
 
@@ -47,6 +50,7 @@ export default async function PlannerEventDetailPage({
           <p className="mt-1 text-sm text-muted-foreground">
             {confirmed}/{event.capacity} confirmed • {waitlisted} waitlisted
           </p>
+          <p className="mt-0.5 text-xs text-muted-foreground">Created by {createdByLabel}</p>
         </div>
         <div className="flex items-center gap-2">
           {plan && (

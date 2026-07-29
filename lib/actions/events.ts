@@ -55,7 +55,7 @@ export async function createEventAction(
     floorPlanId = plan.id;
   }
 
-  const event = await createEvent({ ...fields, floorPlanId });
+  const event = await createEvent({ ...fields, floorPlanId, createdBy: user.id });
   revalidatePath("/planner/events");
   revalidatePath("/planner");
   redirect(`/planner/events/${event.id}`);

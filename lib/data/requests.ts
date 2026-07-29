@@ -101,7 +101,7 @@ async function applyRequest(request: ChangeRequest): Promise<void> {
         const plan = await cloneFloorPlanFromTemplate(templateId, `${fields.name} Layout`);
         floorPlanId = plan.id;
       }
-      await createEvent({ ...fields, floorPlanId });
+      await createEvent({ ...fields, floorPlanId, createdBy: request.requestedBy });
       break;
     }
     case "event.update": {
