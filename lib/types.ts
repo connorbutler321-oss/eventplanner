@@ -29,10 +29,12 @@ export type NotificationType =
   | "reminder"
   | "cancellation";
 
-// Planners in "request" mode have their event/floor-plan changes queued for
-// admin approval instead of applied immediately; "full" (the default for
-// non-planners) applies changes directly. See ChangeRequest below.
-export type AccessMode = "full" | "request";
+// Controls how much a planner-side user can change:
+//   - "full"    — applies event/floor-plan changes directly
+//   - "request" — planner changes are queued for admin approval (see ChangeRequest)
+//   - "view"    — read-only; cannot create or change events/floor plans
+// Planners default to "request", staff default to "view", admins are always full.
+export type AccessMode = "full" | "request" | "view";
 
 export interface User {
   id: string;

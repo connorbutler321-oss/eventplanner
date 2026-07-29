@@ -65,9 +65,10 @@ async function createSchemaAndSeed(): Promise<void> {
   )`;
   // Migration for databases created before planner access modes existed.
   await sql`ALTER TABLE users ADD COLUMN IF NOT EXISTS access_mode TEXT`;
-  // Default existing planners to request mode. Only touches rows never set, so
-  // a planner an admin later grants full access to is left alone.
+  // Default existing planners to request mode and staff to view-only. Only
+  // touches rows never set, so a mode an admin later chooses is left alone.
   await sql`UPDATE users SET access_mode = 'request' WHERE role = 'planner' AND access_mode IS NULL`;
+  await sql`UPDATE users SET access_mode = 'view' WHERE role = 'staff' AND access_mode IS NULL`;
   await sql`CREATE TABLE IF NOT EXISTS attendees (
     id TEXT PRIMARY KEY,
     name TEXT NOT NULL,
@@ -168,7 +169,7 @@ async function createSchemaAndSeed(): Promise<void> {
     pin: u.pin,
     role: u.role,
     attendee_id: u.attendeeId ?? null,
-    access_mode: u.role === "planner" ? "request" : null,
+    access_mode: u.role === "planner" ? "request" : u.role === "staff" ? "view" : null,
     created_at: u.createdAt,
     last_login: u.lastLogin ?? null,
   }));

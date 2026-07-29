@@ -83,6 +83,19 @@ function UserRow({ user, isSelf }: { user: User; isSelf: boolean }) {
                 <option value="full">Full access (direct)</option>
               </Select>
             )}
+            {user.role === "staff" && (
+              <Select
+                className="w-auto text-xs"
+                defaultValue={user.accessMode ?? "view"}
+                disabled={pending}
+                onChange={(e) =>
+                  startTransition(() => setUserAccessModeAction(user.id, e.target.value as AccessMode))
+                }
+              >
+                <option value="view">View only</option>
+                <option value="full">Full access</option>
+              </Select>
+            )}
           </div>
         ) : (
           <Badge tone={roleTone[user.role]}>Vendor</Badge>

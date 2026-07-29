@@ -1,8 +1,12 @@
+import { redirect } from "next/navigation";
+import { getSessionUser, isViewOnly } from "@/lib/auth";
 import { getTemplates } from "@/lib/data/floorplans";
 import { EventForm } from "@/components/planner/EventForm";
 import { Card, CardBody } from "@/components/ui/Card";
 
 export default async function NewEventPage() {
+  const viewer = await getSessionUser();
+  if (viewer && isViewOnly(viewer)) redirect("/planner/events");
   const templates = await getTemplates();
 
   return (

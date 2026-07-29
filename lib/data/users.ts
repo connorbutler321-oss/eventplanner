@@ -64,8 +64,9 @@ export async function createUser(input: {
   role: Role;
   attendeeId?: string;
 }): Promise<User> {
-  // New planners start in request mode; other roles apply changes directly.
-  const accessMode: AccessMode | undefined = input.role === "planner" ? "request" : undefined;
+  // New planners start in request mode and staff view-only; others are direct.
+  const accessMode: AccessMode | undefined =
+    input.role === "planner" ? "request" : input.role === "staff" ? "view" : undefined;
   const user: User = {
     id: nextId("u"),
     accessMode,

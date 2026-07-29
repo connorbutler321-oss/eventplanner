@@ -1,5 +1,6 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
+import { getSessionUser, isViewOnly } from "@/lib/auth";
 import { getEventById } from "@/lib/data/events";
 import { getRegistrationsForEvent, confirmedCount, waitlistCount } from "@/lib/data/registrations";
 import { getAttendees } from "@/lib/data/attendees";
@@ -12,7 +13,7 @@ import { EventForm } from "@/components/planner/EventForm";
 import { EventStatusControl } from "@/components/planner/EventStatusControl";
 import { AIAssistPanel } from "@/components/planner/AIAssistPanel";
 import { Card, CardBody, CardHeader, CardTitle } from "@/components/ui/Card";
-import { RegistrationStatusBadge } from "@/components/ui/Badge";
+import { RegistrationStatusBadge, EventStatusBadge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
 import { ConfirmButton } from "@/components/ui/ConfirmButton";
 import type { RegistrationStatus } from "@/lib/types";
@@ -23,6 +24,8 @@ export default async function PlannerEventDetailPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
+  const viewer = await getSessionUser();
+  const viewOnly = viewer ? isViewOnly(viewer) : false;
   const event = await getEventById(id);
   if (!event) notFound();
 
@@ -48,10 +51,14 @@ export default async function PlannerEventDetailPage({
         <div className="flex items-center gap-2">
           {plan && (
             <Button href={`/planner/floorplans/${plan.id}`} variant="secondary">
-              Edit floor plan
+              {viewOnly ? "View floor plan" : "Edit floor plan"}
             </Button>
           )}
-          <EventStatusControl eventId={event.id} status={event.status} />
+          {viewOnly ? (
+            <EventStatusBadge status={event.status} />
+          ) : (
+            <EventStatusControl eventId={event.id} status={event.status} />
+          )}
         </div>
       </div>
 
@@ -100,6 +107,9 @@ export default async function PlannerEventDetailPage({
                       <RegistrationStatusBadge status={r.status} />
                     </td>
                     <td className="px-4 py-3">
+                      {viewOnly ? (
+                        <span className="text-xs text-muted-foreground">—</span>
+                      ) : (
                       <div className="flex flex-wrap gap-2">
                         {r.status === "Confirmed" &&
                           nextStatusOptions.map((s) => (
@@ -133,6 +143,7 @@ export default async function PlannerEventDetailPage({
                           </form>
                         )}
                       </div>
+                      )}
                     </td>
                   </tr>
                 );
@@ -154,7 +165,35 @@ export default async function PlannerEventDetailPage({
           <CardTitle>Event details</CardTitle>
         </CardHeader>
         <CardBody>
-          <EventForm event={event} />
+          {viewOnly ? (
+            <dl className="grid grid-cols-1 gap-3 text-sm sm:grid-cols-2">
+              <div>
+                <dt className="text-xs font-medium uppercase text-muted-foreground">Category</dt>
+                <dd className="text-foreground">{event.category}</dd>
+              </div>
+              <div>
+                <dt className="text-xs font-medium uppercase text-muted-foreground">Date &amp; time</dt>
+                <dd className="text-foreground">{new Date(event.date).toLocaleString()}</dd>
+              </div>
+              <div>
+                <dt className="text-xs font-medium uppercase text-muted-foreground">Location</dt>
+                <dd className="text-foreground">{event.location}</dd>
+              </div>
+              <div>
+                <dt className="text-xs font-medium uppercase text-muted-foreground">Capacity</dt>
+                <dd className="text-foreground">{event.capacity}</dd>
+              </div>
+              <div className="sm:col-span-2">
+                <dt className="text-xs font-medium uppercase text-muted-foreground">Description</dt>
+                <dd className="text-foreground">{event.description}</dd>
+              </div>
+              <p className="sm:col-span-2 text-xs text-muted-foreground">
+                Your account has view-only access. Ask an admin to make changes.
+              </p>
+            </dl>
+          ) : (
+            <EventForm event={event} />
+          )}
         </CardBody>
       </Card>
 

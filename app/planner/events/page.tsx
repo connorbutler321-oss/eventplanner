@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { getSessionUser, isViewOnly } from "@/lib/auth";
 import { getEvents } from "@/lib/data/events";
 import { confirmedCount, waitlistCount } from "@/lib/data/registrations";
 import { Card } from "@/components/ui/Card";
@@ -6,6 +7,8 @@ import { EventStatusBadge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
 
 export default async function PlannerEventsPage() {
+  const viewer = await getSessionUser();
+  const viewOnly = viewer ? isViewOnly(viewer) : false;
   const events = await getEvents();
   const rows = await Promise.all(
     events.map(async (event) => ({
@@ -22,7 +25,7 @@ export default async function PlannerEventsPage() {
           <h1 className="text-2xl font-bold text-heading">Events</h1>
           <p className="mt-1 text-sm text-muted-foreground">Create and manage every event on the calendar.</p>
         </div>
-        <Button href="/planner/events/new">+ New event</Button>
+        {!viewOnly && <Button href="/planner/events/new">+ New event</Button>}
       </div>
 
       <Card>

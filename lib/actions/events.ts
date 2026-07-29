@@ -2,7 +2,7 @@
 
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
-import { getSessionUser, requiresApproval } from "@/lib/auth";
+import { getSessionUser, requiresApproval, isViewOnly } from "@/lib/auth";
 import { createEvent, updateEvent, getEventById } from "@/lib/data/events";
 import { cloneFloorPlanFromTemplate } from "@/lib/data/floorplans";
 import { createChangeRequest } from "@/lib/data/requests";
@@ -27,6 +27,9 @@ export async function createEventAction(
 ): Promise<EventFormState> {
   const user = await getSessionUser();
   if (!user) redirect("/login");
+  if (isViewOnly(user)) {
+    return { error: "Your account has view-only access. Ask an admin for edit access." };
+  }
 
   const fields = readEventFields(formData);
   if (!fields.name || !fields.date || !fields.location || fields.capacity <= 0) {
@@ -65,6 +68,9 @@ export async function updateEventAction(
 ): Promise<EventFormState> {
   const user = await getSessionUser();
   if (!user) redirect("/login");
+  if (isViewOnly(user)) {
+    return { error: "Your account has view-only access. Ask an admin for edit access." };
+  }
 
   const fields = readEventFields(formData);
   if (!fields.name || !fields.date || !fields.location || fields.capacity <= 0) {
@@ -93,6 +99,7 @@ export async function updateEventAction(
 export async function setEventStatusAction(eventId: string, status: EventStatus): Promise<void> {
   const user = await getSessionUser();
   if (!user) redirect("/login");
+  if (isViewOnly(user)) throw new Error("Forbidden: your account has view-only access.");
 
   if (requiresApproval(user)) {
     const event = await getEventById(eventId);
