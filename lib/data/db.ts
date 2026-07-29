@@ -59,9 +59,16 @@ async function createSchemaAndSeed(): Promise<void> {
     pin TEXT NOT NULL,
     role TEXT NOT NULL,
     attendee_id TEXT,
+    access_mode TEXT,
     created_at TEXT NOT NULL,
     last_login TEXT
   )`;
+  // Migration for databases created before planner access modes existed.
+  await sql`ALTER TABLE users ADD COLUMN IF NOT EXISTS access_mode TEXT`;
+  // Default existing planners to request mode and staff to view-only. Only
+  // touches rows never set, so a mode an admin later chooses is left alone.
+  await sql`UPDATE users SET access_mode = 'request' WHERE role = 'planner' AND access_mode IS NULL`;
+  await sql`UPDATE users SET access_mode = 'view' WHERE role = 'staff' AND access_mode IS NULL`;
   await sql`CREATE TABLE IF NOT EXISTS attendees (
     id TEXT PRIMARY KEY,
     name TEXT NOT NULL,
@@ -120,6 +127,19 @@ async function createSchemaAndSeed(): Promise<void> {
     done BOOLEAN NOT NULL DEFAULT FALSE,
     event_id TEXT
   )`;
+  await sql`CREATE TABLE IF NOT EXISTS change_requests (
+    id TEXT PRIMARY KEY,
+    type TEXT NOT NULL,
+    status TEXT NOT NULL DEFAULT 'pending',
+    requested_by TEXT NOT NULL,
+    target_id TEXT,
+    summary TEXT NOT NULL,
+    payload JSONB NOT NULL DEFAULT '{}'::jsonb,
+    created_at TEXT NOT NULL,
+    decided_by TEXT,
+    decided_at TEXT,
+    decline_reason TEXT
+  )`;
   // Ledger of seed records already applied to this database. Seeding is keyed
   // off this rather than "is the database empty?", so that seed entries added
   // later (e.g. a new team login) still reach an existing database, while a
@@ -153,14 +173,15 @@ async function createSchemaAndSeed(): Promise<void> {
     pin: u.pin,
     role: u.role,
     attendee_id: u.attendeeId ?? null,
+    access_mode: u.role === "planner" ? "request" : u.role === "staff" ? "view" : null,
     created_at: u.createdAt,
     last_login: u.lastLogin ?? null,
   }));
   if (users.length) {
-    await sql`INSERT INTO users (id, name, email, password, pin, role, attendee_id, created_at, last_login)
-      SELECT id, name, email, password, pin, role, attendee_id, created_at, last_login
+    await sql`INSERT INTO users (id, name, email, password, pin, role, attendee_id, access_mode, created_at, last_login)
+      SELECT id, name, email, password, pin, role, attendee_id, access_mode, created_at, last_login
       FROM jsonb_to_recordset(${JSON.stringify(users)}::jsonb)
-      AS x(id text, name text, email text, password text, pin text, role text, attendee_id text, created_at text, last_login text)
+      AS x(id text, name text, email text, password text, pin text, role text, attendee_id text, access_mode text, created_at text, last_login text)
       ON CONFLICT (id) DO NOTHING`;
   }
 

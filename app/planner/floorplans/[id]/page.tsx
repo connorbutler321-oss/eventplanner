@@ -1,7 +1,9 @@
 import { notFound } from "next/navigation";
+import { getSessionUser, isViewOnly } from "@/lib/auth";
 import { getFloorPlanById } from "@/lib/data/floorplans";
 import { getEvents } from "@/lib/data/events";
 import { FloorPlanEditor } from "@/components/floorplan/FloorPlanEditor";
+import { FloorPlanCanvas } from "@/components/floorplan/FloorPlanCanvas";
 
 export default async function PlannerFloorPlanEditorPage({
   params,
@@ -9,6 +11,8 @@ export default async function PlannerFloorPlanEditorPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
+  const viewer = await getSessionUser();
+  const viewOnly = viewer ? isViewOnly(viewer) : false;
   const plan = await getFloorPlanById(id);
   if (!plan) notFound();
 
@@ -24,7 +28,16 @@ export default async function PlannerFloorPlanEditorPage({
           </p>
         )}
       </div>
-      <FloorPlanEditor plan={plan} />
+      {viewOnly ? (
+        <>
+          <p className="mb-3 text-xs text-muted-foreground">
+            View-only access — you can see this layout but not edit it.
+          </p>
+          <FloorPlanCanvas plan={plan} />
+        </>
+      ) : (
+        <FloorPlanEditor plan={plan} />
+      )}
     </div>
   );
 }

@@ -73,6 +73,34 @@ export async function requireAdmin(): Promise<User> {
   return user;
 }
 
+/**
+ * True when this user's event/floor-plan changes must be queued for admin
+ * approval rather than applied directly: request-mode planners only. Admins,
+ * staff, and full-access planners apply changes immediately.
+ */
+export function requiresApproval(user: User): boolean {
+  return user.role === "planner" && user.accessMode === "request";
+}
+
+/**
+ * True when this user has read-only access and may not create or change
+ * events or floor plans: view-mode staff. (Admins are always full access.)
+ */
+export function isViewOnly(user: User): boolean {
+  return user.role === "staff" && user.accessMode === "view";
+}
+
+/**
+ * Backstop for mutation Server Actions that view-only users must never reach.
+ * The UI hides the controls; this rejects tampering that posts directly.
+ */
+export async function assertCanEdit(): Promise<User> {
+  const user = await getSessionUser();
+  if (!user) throw new Error("Unauthorized");
+  if (isViewOnly(user)) throw new Error("Forbidden: your account has view-only access.");
+  return user;
+}
+
 export async function isPreviewingVendor(): Promise<boolean> {
   const store = await cookies();
   return store.get("ef_preview")?.value === "vendor";

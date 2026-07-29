@@ -3,7 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { requireAdmin } from "@/lib/auth";
 import { createUser, updateUser, deleteUser, getUserByEmail } from "@/lib/data/users";
-import type { Role } from "@/lib/types";
+import type { AccessMode, Role } from "@/lib/types";
 
 // Every action in this file manages staff access and is therefore admin-only.
 // The page guard in app/planner/users/page.tsx protects the page, not these
@@ -40,6 +40,12 @@ export async function createUserAction(
 export async function updateUserRoleAction(userId: string, role: Role): Promise<void> {
   await requireAdmin();
   await updateUser(userId, { role });
+  revalidatePath("/planner/users");
+}
+
+export async function setUserAccessModeAction(userId: string, mode: AccessMode): Promise<void> {
+  await requireAdmin();
+  await updateUser(userId, { accessMode: mode });
   revalidatePath("/planner/users");
 }
 

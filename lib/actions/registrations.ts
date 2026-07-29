@@ -2,7 +2,7 @@
 
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
-import { getSessionUser } from "@/lib/auth";
+import { getSessionUser, assertCanEdit } from "@/lib/auth";
 import { findOrCreateAttendeeByEmail } from "@/lib/data/attendees";
 import {
   createRegistration,
@@ -67,6 +67,7 @@ export async function cancelMyRegistrationAction(registrationId: string): Promis
 }
 
 export async function adminCancelRegistrationAction(eventId: string, registrationId: string): Promise<void> {
+  await assertCanEdit();
   await cancelRegistration(registrationId);
   revalidatePath(`/planner/events/${eventId}`);
   revalidatePath("/planner");
@@ -78,6 +79,7 @@ export async function adminSetRegistrationStatusAction(
   registrationId: string,
   status: RegistrationStatus
 ): Promise<void> {
+  await assertCanEdit();
   await setRegistrationStatus(registrationId, status);
   revalidatePath(`/planner/events/${eventId}`);
   revalidatePath("/planner");

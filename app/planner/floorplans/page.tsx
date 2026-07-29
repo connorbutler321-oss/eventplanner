@@ -1,3 +1,4 @@
+import { getSessionUser, isViewOnly } from "@/lib/auth";
 import { getFloorPlans } from "@/lib/data/floorplans";
 import { getEvents } from "@/lib/data/events";
 import { Card, CardBody, CardHeader, CardTitle } from "@/components/ui/Card";
@@ -6,6 +7,8 @@ import { Button } from "@/components/ui/Button";
 import { NewFloorPlanForm } from "@/components/planner/NewFloorPlanForm";
 
 export default async function PlannerFloorPlansPage() {
+  const viewer = await getSessionUser();
+  const viewOnly = viewer ? isViewOnly(viewer) : false;
   const plans = await getFloorPlans();
   const templates = plans.filter((p) => p.isTemplate);
   const eventPlans = plans.filter((p) => !p.isTemplate);
@@ -20,14 +23,16 @@ export default async function PlannerFloorPlansPage() {
         </p>
       </div>
 
-      <Card>
-        <CardHeader>
-          <CardTitle>Create a floor plan</CardTitle>
-        </CardHeader>
-        <CardBody>
-          <NewFloorPlanForm templates={templates} />
-        </CardBody>
-      </Card>
+      {!viewOnly && (
+        <Card>
+          <CardHeader>
+            <CardTitle>Create a floor plan</CardTitle>
+          </CardHeader>
+          <CardBody>
+            <NewFloorPlanForm templates={templates} />
+          </CardBody>
+        </Card>
+      )}
 
       <div>
         <h2 className="mb-3 text-sm font-semibold uppercase tracking-wide text-muted-foreground">Event floor plans</h2>
@@ -42,7 +47,7 @@ export default async function PlannerFloorPlansPage() {
                     {linkedEvent ? `Used by ${linkedEvent.name}` : "Not linked to an event"} • {plan.spaces.length} spaces
                   </p>
                   <Button href={`/planner/floorplans/${plan.id}`} size="sm" variant="secondary" className="w-full">
-                    Edit
+                    {viewOnly ? "View" : "Edit"}
                   </Button>
                 </CardBody>
               </Card>
@@ -64,7 +69,7 @@ export default async function PlannerFloorPlansPage() {
                 </div>
                 <p className="mb-3 text-xs text-muted-foreground">{plan.spaces.length} spaces</p>
                 <Button href={`/planner/floorplans/${plan.id}`} size="sm" variant="secondary" className="w-full">
-                  Preview / edit
+                  {viewOnly ? "View" : "Preview / edit"}
                 </Button>
               </CardBody>
             </Card>

@@ -1,5 +1,5 @@
 import { db, nextId } from "./db";
-import type { Role, User } from "@/lib/types";
+import type { AccessMode, Role, User } from "@/lib/types";
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 function mapUser(row: any): User {
@@ -11,6 +11,7 @@ function mapUser(row: any): User {
     pin: row.pin,
     role: row.role,
     attendeeId: row.attendee_id ?? undefined,
+    accessMode: row.access_mode ?? undefined,
     createdAt: row.created_at,
     lastLogin: row.last_login ?? undefined,
   };
@@ -63,26 +64,32 @@ export async function createUser(input: {
   role: Role;
   attendeeId?: string;
 }): Promise<User> {
+  // New planners start in request mode and staff view-only; others are direct.
+  const accessMode: AccessMode | undefined =
+    input.role === "planner" ? "request" : input.role === "staff" ? "view" : undefined;
   const user: User = {
     id: nextId("u"),
+    accessMode,
     createdAt: new Date().toISOString(),
     ...input,
   };
   const sql = await db();
-  await sql`INSERT INTO users (id, name, email, password, pin, role, attendee_id, created_at)
-    VALUES (${user.id}, ${user.name}, ${user.email}, ${user.password}, ${user.pin}, ${user.role}, ${user.attendeeId ?? null}, ${user.createdAt})`;
+  await sql`INSERT INTO users (id, name, email, password, pin, role, attendee_id, access_mode, created_at)
+    VALUES (${user.id}, ${user.name}, ${user.email}, ${user.password}, ${user.pin}, ${user.role}, ${user.attendeeId ?? null}, ${user.accessMode ?? null}, ${user.createdAt})`;
   return user;
 }
 
 export async function updateUser(
   id: string,
-  patch: Partial<Pick<User, "name" | "role" | "pin" | "password">>
+  patch: Partial<Pick<User, "name" | "role" | "pin" | "password" | "accessMode">>
 ): Promise<User | null> {
   const existing = await getUserById(id);
   if (!existing) return null;
   const merged = { ...existing, ...patch };
   const sql = await db();
-  await sql`UPDATE users SET name = ${merged.name}, role = ${merged.role}, pin = ${merged.pin}, password = ${merged.password} WHERE id = ${id}`;
+  await sql`UPDATE users
+    SET name = ${merged.name}, role = ${merged.role}, pin = ${merged.pin}, password = ${merged.password}, access_mode = ${merged.accessMode ?? null}
+    WHERE id = ${id}`;
   return merged;
 }
 
