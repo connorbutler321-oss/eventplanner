@@ -52,6 +52,7 @@ export interface EventRecord {
   status: EventStatus;
   floorPlanId?: string;
   createdAt: string;
+  createdBy?: string; // id of the user who created the event (unset for seeded events)
 }
 
 export interface Attendee {

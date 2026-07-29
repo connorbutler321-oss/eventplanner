@@ -14,6 +14,7 @@ function mapEvent(row: any): EventRecord {
     status: row.status,
     floorPlanId: row.floor_plan_id ?? undefined,
     createdAt: row.created_at,
+    createdBy: row.created_by ?? undefined,
   };
 }
 
@@ -43,6 +44,7 @@ export async function createEvent(input: {
   location: string;
   capacity: number;
   floorPlanId?: string;
+  createdBy?: string;
 }): Promise<EventRecord> {
   const event: EventRecord = {
     id: nextId("e"),
@@ -51,8 +53,8 @@ export async function createEvent(input: {
     ...input,
   };
   const sql = await db();
-  await sql`INSERT INTO events (id, name, description, category, date, location, capacity, status, floor_plan_id, created_at)
-    VALUES (${event.id}, ${event.name}, ${event.description}, ${event.category}, ${event.date}, ${event.location}, ${event.capacity}, ${event.status}, ${event.floorPlanId ?? null}, ${event.createdAt})`;
+  await sql`INSERT INTO events (id, name, description, category, date, location, capacity, status, floor_plan_id, created_at, created_by)
+    VALUES (${event.id}, ${event.name}, ${event.description}, ${event.category}, ${event.date}, ${event.location}, ${event.capacity}, ${event.status}, ${event.floorPlanId ?? null}, ${event.createdAt}, ${event.createdBy ?? null})`;
   return event;
 }
 

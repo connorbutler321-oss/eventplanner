@@ -80,8 +80,12 @@ async function createSchemaAndSeed(): Promise<void> {
     capacity INTEGER NOT NULL,
     status TEXT NOT NULL,
     floor_plan_id TEXT,
-    created_at TEXT NOT NULL
+    created_at TEXT NOT NULL,
+    created_by TEXT
   )`;
+  // Migration: add created_by to databases created before event attribution.
+  // No-op on new databases where the column is already in the CREATE above.
+  await sql`ALTER TABLE events ADD COLUMN IF NOT EXISTS created_by TEXT`;
   await sql`CREATE TABLE IF NOT EXISTS floor_plans (
     id TEXT PRIMARY KEY,
     name TEXT NOT NULL,
