@@ -1,17 +1,20 @@
 import Link from "next/link";
 import { getEvents } from "@/lib/data/events";
 import { confirmedCount, waitlistCount } from "@/lib/data/registrations";
+import { getUsers } from "@/lib/data/users";
 import { Card } from "@/components/ui/Card";
 import { EventStatusBadge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
 
 export default async function PlannerEventsPage() {
   const events = await getEvents();
+  const userNames = new Map((await getUsers()).map((u) => [u.id, u.name]));
   const rows = await Promise.all(
     events.map(async (event) => ({
       event,
       confirmed: await confirmedCount(event.id),
       waitlisted: await waitlistCount(event.id),
+      createdBy: event.createdBy ? userNames.get(event.createdBy) ?? "Unknown user" : "Sample data",
     }))
   );
 
@@ -34,12 +37,13 @@ export default async function PlannerEventsPage() {
                 <th className="px-4 py-3">Date</th>
                 <th className="px-4 py-3">Location</th>
                 <th className="px-4 py-3">Status</th>
+                <th className="px-4 py-3">Created by</th>
                 <th className="px-4 py-3">Confirmed / Capacity</th>
                 <th className="px-4 py-3">Waitlist</th>
               </tr>
             </thead>
             <tbody>
-              {rows.map(({ event, confirmed, waitlisted }) => (
+              {rows.map(({ event, confirmed, waitlisted, createdBy }) => (
                 <tr key={event.id} className="border-b border-border last:border-0 hover:bg-surface-muted">
                   <td className="px-4 py-3">
                     <Link href={`/planner/events/${event.id}`} className="font-semibold text-primary hover:underline">
@@ -52,6 +56,7 @@ export default async function PlannerEventsPage() {
                   <td className="px-4 py-3">
                     <EventStatusBadge status={event.status} />
                   </td>
+                  <td className="px-4 py-3 whitespace-nowrap">{createdBy}</td>
                   <td className="px-4 py-3">
                     {confirmed} / {event.capacity}
                   </td>

@@ -2,6 +2,7 @@
 
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
+import { getSessionUser } from "@/lib/auth";
 import { createEvent, updateEvent } from "@/lib/data/events";
 import { cloneFloorPlanFromTemplate } from "@/lib/data/floorplans";
 import type { EventStatus } from "@/lib/types";
@@ -23,6 +24,9 @@ export async function createEventAction(
   _prev: EventFormState,
   formData: FormData
 ): Promise<EventFormState> {
+  const user = await getSessionUser();
+  if (!user) redirect("/login");
+
   const fields = readEventFields(formData);
   if (!fields.name || !fields.date || !fields.location || fields.capacity <= 0) {
     return { error: "Please fill in all required fields with a capacity greater than 0." };
@@ -35,7 +39,7 @@ export async function createEventAction(
     floorPlanId = plan.id;
   }
 
-  const event = await createEvent({ ...fields, floorPlanId });
+  const event = await createEvent({ ...fields, floorPlanId, createdBy: user.id });
   revalidatePath("/planner/events");
   revalidatePath("/planner");
   redirect(`/planner/events/${event.id}`);
