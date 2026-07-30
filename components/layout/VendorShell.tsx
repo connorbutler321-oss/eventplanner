@@ -1,6 +1,6 @@
 import type { User } from "@/lib/types";
 import { exitVendorPreviewAction, lockScreenAction, logoutAction } from "@/lib/actions/auth";
-import { Button } from "@/components/ui/Button";
+import { SubmitButton } from "@/components/ui/SubmitButton";
 import { TopNavItem } from "@/components/layout/TopNavItem";
 import { ThemeToggle } from "@/components/layout/ThemeToggle";
 import { IconStore, IconClipboard } from "@/components/ui/icons";
@@ -61,14 +61,14 @@ export function VendorShell({
             {!isStaffPreview && (
               <>
                 <form action={lockScreenAction}>
-                  <Button type="submit" variant="ghost" size="sm" className="!text-white hover:!bg-lu-purple-700">
+                  <SubmitButton variant="ghost" size="sm" className="!text-white hover:!bg-lu-purple-700" pendingLabel="Locking…">
                     Lock
-                  </Button>
+                  </SubmitButton>
                 </form>
                 <form action={logoutAction}>
-                  <Button type="submit" variant="gold" size="sm">
+                  <SubmitButton variant="gold" size="sm" pendingLabel="Signing out…">
                     Sign out
-                  </Button>
+                  </SubmitButton>
                 </form>
               </>
             )}
