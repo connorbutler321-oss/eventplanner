@@ -50,6 +50,7 @@ export default async function MyRegistrationsPage() {
                         variant="danger"
                         size="sm"
                         confirmMessage="Cancel this registration?"
+                        pendingLabel="Canceling…"
                       >
                         Cancel
                       </ConfirmButton>
