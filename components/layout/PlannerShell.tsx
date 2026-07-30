@@ -93,7 +93,7 @@ export function PlannerShell({
           <div className="md:hidden text-sm font-bold text-heading">EventFlow AI</div>
           <div className="hidden md:block" />
           <div className="flex items-center gap-3">
-            <div className="text-right">
+            <div className="hidden text-right sm:block">
               <p className="text-sm font-semibold text-heading">{user.name}</p>
               <p className="text-xs capitalize text-muted-foreground">{user.role}</p>
             </div>
