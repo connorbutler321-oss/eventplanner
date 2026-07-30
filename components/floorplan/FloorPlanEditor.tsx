@@ -259,9 +259,9 @@ export function FloorPlanEditor({ plan }: { plan: FloorPlan }) {
         <Button size="sm" variant="secondary" onClick={() => addSpace("entrance")}>
           + Entrance
         </Button>
-        <label className="ml-auto cursor-pointer text-xs font-semibold text-lu-purple-600 hover:underline">
+        <label className="ml-auto cursor-pointer text-xs font-semibold text-primary hover:underline">
           Upload background image to trace
-          <input type="file" accept="image/*" className="hidden" onChange={handleImageUpload} />
+          <input type="file" accept="image/*" className="sr-only" onChange={handleImageUpload} />
         </label>
         {backgroundImageUrl && (
           <button
