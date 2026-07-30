@@ -15,6 +15,7 @@ const TYPE_LABEL: Record<ChangeRequestType, string> = {
   "event.create": "New event",
   "event.update": "Event edit",
   "event.status": "Status change",
+  "event.floorplan": "Floor plan link",
   "floorplan.update": "Floor plan edit",
 };
 

@@ -1,10 +1,10 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
-import { getSessionUser, isViewOnly } from "@/lib/auth";
-import { getEventById } from "@/lib/data/events";
+import { getSessionUser, isViewOnly, requiresApproval } from "@/lib/auth";
+import { getEventById, getEvents } from "@/lib/data/events";
 import { getRegistrationsForEvent, confirmedCount, waitlistCount } from "@/lib/data/registrations";
 import { getAttendees } from "@/lib/data/attendees";
-import { getFloorPlanById } from "@/lib/data/floorplans";
+import { getFloorPlanById, getFloorPlans } from "@/lib/data/floorplans";
 import { getUserById } from "@/lib/data/users";
 import {
   adminCancelRegistrationAction,
@@ -12,6 +12,7 @@ import {
 } from "@/lib/actions/registrations";
 import { EventForm } from "@/components/planner/EventForm";
 import { EventStatusControl } from "@/components/planner/EventStatusControl";
+import { EventFloorPlanControl } from "@/components/planner/EventFloorPlanControl";
 import { AIAssistPanel } from "@/components/planner/AIAssistPanel";
 import { Card, CardBody, CardHeader, CardTitle } from "@/components/ui/Card";
 import { RegistrationStatusBadge, EventStatusBadge } from "@/components/ui/Badge";
@@ -40,6 +41,17 @@ export default async function PlannerEventDetailPage({
   const creator = event.createdBy ? await getUserById(event.createdBy) : undefined;
   const createdByLabel = event.createdBy ? creator?.name ?? "Unknown user" : "Sample data";
 
+  // Floor-plan attach options (only needed for editors).
+  const requestMode = viewer ? requiresApproval(viewer) : false;
+  const allPlans = viewOnly ? [] : await getFloorPlans();
+  const templatePlans = allPlans.filter((p) => p.isTemplate);
+  const linkedPlanIds = new Set(
+    (viewOnly ? [] : await getEvents()).map((e) => e.floorPlanId).filter(Boolean) as string[]
+  );
+  const attachablePlans = allPlans.filter(
+    (p) => !p.isTemplate && !linkedPlanIds.has(p.id) && p.id !== event.floorPlanId
+  );
+
   const nextStatusOptions: RegistrationStatus[] = ["Attended", "No-show"];
 
   return (
@@ -65,6 +77,23 @@ export default async function PlannerEventDetailPage({
           )}
         </div>
       </div>
+
+      {!viewOnly && (
+        <Card>
+          <CardHeader>
+            <CardTitle>Floor plan</CardTitle>
+          </CardHeader>
+          <CardBody>
+            <EventFloorPlanControl
+              eventId={event.id}
+              currentPlan={plan ? { id: plan.id, name: plan.name } : null}
+              templates={templatePlans}
+              existingPlans={attachablePlans}
+              requestMode={requestMode}
+            />
+          </CardBody>
+        </Card>
+      )}
 
       <Card>
         <CardHeader>

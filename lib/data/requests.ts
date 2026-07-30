@@ -6,7 +6,7 @@ import type {
   EventStatus,
 } from "@/lib/types";
 import { createEvent, updateEvent } from "./events";
-import { cloneFloorPlanFromTemplate, updateFloorPlan } from "./floorplans";
+import { cloneFloorPlanFromTemplate, updateFloorPlan, resolveFloorPlanChoice } from "./floorplans";
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 function mapRequest(row: any): ChangeRequest {
@@ -112,6 +112,14 @@ async function applyRequest(request: ChangeRequest): Promise<void> {
     case "event.status": {
       const { status } = request.payload as { status: EventStatus };
       if (request.targetId) await updateEvent(request.targetId, { status });
+      break;
+    }
+    case "event.floorplan": {
+      const { choice, eventName } = request.payload as { choice: string; eventName: string };
+      if (request.targetId) {
+        const floorPlanId = await resolveFloorPlanChoice(choice, eventName);
+        await updateEvent(request.targetId, { floorPlanId });
+      }
       break;
     }
     case "floorplan.update": {
