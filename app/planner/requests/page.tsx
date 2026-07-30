@@ -8,7 +8,7 @@ import { getUsers } from "@/lib/data/users";
 import { approveRequestAction, declineRequestAction } from "@/lib/actions/requests";
 import { Card, CardBody, CardHeader, CardTitle } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
-import { Button } from "@/components/ui/Button";
+import { SubmitButton } from "@/components/ui/SubmitButton";
 import type { ChangeRequest, ChangeRequestStatus, ChangeRequestType } from "@/lib/types";
 
 const TYPE_LABEL: Record<ChangeRequestType, string> = {
@@ -94,9 +94,9 @@ export default async function ApprovalsPage() {
                       await approveRequestAction(req.id);
                     }}
                   >
-                    <Button type="submit" size="sm">
+                    <SubmitButton size="sm" pendingLabel="Approving…">
                       Approve
-                    </Button>
+                    </SubmitButton>
                   </form>
                   <form
                     action={async (formData: FormData) => {
@@ -107,12 +107,13 @@ export default async function ApprovalsPage() {
                   >
                     <input
                       name="reason"
+                      aria-label="Reason for declining"
                       placeholder="Reason (optional)"
                       className="w-32 rounded-md border border-border bg-surface px-2 py-1 text-xs text-foreground"
                     />
-                    <Button type="submit" variant="danger" size="sm">
+                    <SubmitButton variant="danger" size="sm" pendingLabel="Declining…">
                       Decline
-                    </Button>
+                    </SubmitButton>
                   </form>
                 </div>
               </div>
