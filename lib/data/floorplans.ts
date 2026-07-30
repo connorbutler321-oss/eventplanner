@@ -108,6 +108,38 @@ export async function cloneFloorPlanFromTemplate(templateId: string, name: strin
   });
 }
 
+/**
+ * Turns a floor-plan choice from the "attach to event" UI into the floor-plan
+ * id to store on the event. `choice` is one of:
+ *   ""/"none"        → no floor plan (returns undefined)
+ *   "blank"          → create a fresh empty plan
+ *   "template:<id>"  → clone that template into a new plan
+ *   "existing:<id>"  → attach an existing standalone plan as-is
+ */
+export async function resolveFloorPlanChoice(
+  choice: string,
+  eventName: string
+): Promise<string | undefined> {
+  if (!choice || choice === "none") return undefined;
+  if (choice === "blank") {
+    const plan = await createFloorPlan({
+      name: `${eventName} Layout`,
+      isTemplate: false,
+      canvasWidth: 560,
+      canvasHeight: 360,
+      spaces: [],
+    });
+    return plan.id;
+  }
+  const [kind, id] = choice.split(":");
+  if (kind === "template" && id) {
+    const plan = await cloneFloorPlanFromTemplate(id, `${eventName} Layout`);
+    return plan.id;
+  }
+  if (kind === "existing" && id) return id;
+  return undefined;
+}
+
 export async function updateFloorPlan(
   id: string,
   patch: Partial<Pick<FloorPlan, "name" | "backgroundImageUrl" | "spaces" | "canvasWidth" | "canvasHeight">>

@@ -4,7 +4,7 @@ import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import { getSessionUser, requiresApproval, isViewOnly } from "@/lib/auth";
 import { createEvent, updateEvent, getEventById } from "@/lib/data/events";
-import { cloneFloorPlanFromTemplate } from "@/lib/data/floorplans";
+import { cloneFloorPlanFromTemplate, resolveFloorPlanChoice } from "@/lib/data/floorplans";
 import { createChangeRequest } from "@/lib/data/requests";
 import type { EventStatus } from "@/lib/types";
 
@@ -118,4 +118,42 @@ export async function setEventStatusAction(eventId: string, status: EventStatus)
   revalidatePath(`/planner/events/${eventId}`);
   revalidatePath("/planner/events");
   revalidatePath("/planner");
+}
+
+/**
+ * Attaches, changes, or removes an event's floor plan after creation.
+ * `choice` matches resolveFloorPlanChoice: "none" | "blank" | "template:<id>"
+ * | "existing:<id>". Respects view-only (blocked) and request mode (queued).
+ */
+export async function setEventFloorPlanAction(
+  eventId: string,
+  choice: string
+): Promise<{ queued: boolean }> {
+  const user = await getSessionUser();
+  if (!user) redirect("/login");
+  if (isViewOnly(user)) throw new Error("Forbidden: your account has view-only access.");
+
+  const event = await getEventById(eventId);
+  if (!event) throw new Error("Event not found.");
+
+  if (requiresApproval(user)) {
+    await createChangeRequest({
+      type: "event.floorplan",
+      requestedBy: user.id,
+      targetId: eventId,
+      summary: `Change floor plan for “${event.name}”`,
+      payload: { choice, eventName: event.name },
+    });
+    revalidatePath("/planner/requests");
+    return { queued: true };
+  }
+
+  const floorPlanId = await resolveFloorPlanChoice(choice, event.name);
+  await updateEvent(eventId, { floorPlanId });
+  revalidatePath(`/planner/events/${eventId}`);
+  revalidatePath("/planner/events");
+  revalidatePath("/planner/floorplans");
+  revalidatePath("/planner");
+  revalidatePath("/vendor");
+  return { queued: false };
 }

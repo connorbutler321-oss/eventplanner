@@ -137,7 +137,12 @@ export interface TaskItem {
 // A change proposed by a request-mode planner, awaiting an admin decision.
 // The proposed change lives entirely in `payload`; the live event/floor plan
 // is not touched until an admin approves it.
-export type ChangeRequestType = "event.create" | "event.update" | "event.status" | "floorplan.update";
+export type ChangeRequestType =
+  | "event.create"
+  | "event.update"
+  | "event.status"
+  | "event.floorplan"
+  | "floorplan.update";
 export type ChangeRequestStatus = "pending" | "approved" | "declined";
 
 export interface ChangeRequest {
