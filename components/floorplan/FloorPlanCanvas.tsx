@@ -19,7 +19,9 @@ const typeFill: Record<SpaceType, string> = {
   table: "",
   roundtable: "fill-lu-purple-50 stroke-lu-purple-400",
   chair: "fill-gray-50 stroke-gray-500",
-  door: "fill-lu-gold-50 stroke-lu-gold-600",
+  // NB: gold is only defined at 100 and above in globals.css. `fill-lu-gold-50`
+  // compiled to nothing, so doors fell back to the SVG default fill of black.
+  door: "fill-lu-gold-100 stroke-lu-gold-600",
   wall: "fill-gray-400 stroke-gray-600",
   stage: "fill-lu-purple-100 stroke-lu-purple-500",
   walkway: "fill-white stroke-gray-300",
@@ -151,7 +153,10 @@ export function FloorPlanCanvas({
                 y={space.h / 2}
                 textAnchor="middle"
                 dominantBaseline="middle"
-                className="select-none fill-current text-[11px] font-semibold text-foreground"
+                // Space fills are always light (see statusFill/typeFill above), so
+                // label colors are pinned rather than themed — text-foreground would
+                // flip to near-white in dark mode and vanish against the fill.
+                className="select-none fill-current text-[11px] font-semibold text-lu-purple-950"
               >
                 {space.label}
               </text>
@@ -161,7 +166,7 @@ export function FloorPlanCanvas({
                 x={space.w / 2}
                 y={space.h / 2 + 14}
                 textAnchor="middle"
-                className="select-none fill-current text-[9px] text-muted-foreground"
+                className="select-none fill-current text-[9px] text-lu-purple-700"
               >
                 ${space.price}
               </text>
