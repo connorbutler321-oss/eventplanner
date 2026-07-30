@@ -120,7 +120,7 @@ function UserRow({ user, isSelf }: { user: User; isSelf: boolean }) {
                 setPin("");
               })
             }
-            className="cursor-pointer text-xs font-semibold text-lu-purple-600 hover:underline disabled:opacity-40"
+            className="cursor-pointer rounded text-xs font-semibold text-primary hover:underline focus-visible:ring-2 focus-visible:ring-ring/50 focus-visible:outline-none disabled:opacity-40"
           >
             Set
           </button>
