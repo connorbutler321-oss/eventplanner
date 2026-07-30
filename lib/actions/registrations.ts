@@ -54,24 +54,29 @@ export async function registerForEventAction(
     throw err;
   }
 
-  revalidatePath("/vendor");
-  revalidatePath("/planner");
+  // Registering can reserve a booth (see reserveSpace in lib/data/registrations.ts),
+  // which changes floor-plan data rendered on nested routes — most importantly the
+  // vendor booth picker at /vendor/floorplan/[eventId]. A literal path only refreshes
+  // that one page, so use "layout" to cover the whole subtree; per the revalidatePath
+  // docs, that invalidates the layout and every page beneath it.
+  revalidatePath("/vendor", "layout");
+  revalidatePath("/planner", "layout");
   redirect("/vendor/my-registrations");
 }
 
 export async function cancelMyRegistrationAction(registrationId: string): Promise<void> {
   await cancelRegistration(registrationId);
-  revalidatePath("/vendor/my-registrations");
-  revalidatePath("/vendor");
-  revalidatePath("/planner");
+  // Canceling releases the booth, so the picker and both floor-plan views are stale.
+  revalidatePath("/vendor", "layout");
+  revalidatePath("/planner", "layout");
 }
 
 export async function adminCancelRegistrationAction(eventId: string, registrationId: string): Promise<void> {
   await assertCanEdit();
   await cancelRegistration(registrationId);
   revalidatePath(`/planner/events/${eventId}`);
-  revalidatePath("/planner");
-  revalidatePath("/vendor/my-registrations");
+  revalidatePath("/planner", "layout");
+  revalidatePath("/vendor", "layout");
 }
 
 export async function adminSetRegistrationStatusAction(
@@ -82,6 +87,6 @@ export async function adminSetRegistrationStatusAction(
   await assertCanEdit();
   await setRegistrationStatus(registrationId, status);
   revalidatePath(`/planner/events/${eventId}`);
-  revalidatePath("/planner");
-  revalidatePath("/vendor/my-registrations");
+  revalidatePath("/planner", "layout");
+  revalidatePath("/vendor", "layout");
 }
