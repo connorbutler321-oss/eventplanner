@@ -3,6 +3,7 @@
 import { useActionState } from "react";
 import { loginAction } from "@/lib/actions/auth";
 import { Button } from "@/components/ui/Button";
+import { FormError } from "@/components/ui/FormError";
 import { Input, Label, FieldGroup } from "@/components/ui/Field";
 
 export function LoginForm() {
@@ -20,7 +21,7 @@ export function LoginForm() {
       </FieldGroup>
 
       {state?.error && (
-        <p className="mb-4 rounded-lg bg-red-50 px-3 py-2 text-sm text-danger">{state.error}</p>
+        <FormError className="mb-4">{state.error}</FormError>
       )}
 
       <Button type="submit" className="w-full" disabled={pending}>

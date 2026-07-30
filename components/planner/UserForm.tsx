@@ -3,6 +3,7 @@
 import { useActionState } from "react";
 import { createUserAction } from "@/lib/actions/users";
 import { Button } from "@/components/ui/Button";
+import { FormError } from "@/components/ui/FormError";
 import { Input, Select, Label, FieldGroup } from "@/components/ui/Field";
 
 export function UserForm() {
@@ -34,7 +35,7 @@ export function UserForm() {
         {pending ? "Adding…" : "Add user"}
       </Button>
       {state?.error && (
-        <p className="col-span-full rounded-lg bg-red-50 px-3 py-2 text-sm text-danger">{state.error}</p>
+        <FormError className="col-span-full">{state.error}</FormError>
       )}
     </form>
   );
