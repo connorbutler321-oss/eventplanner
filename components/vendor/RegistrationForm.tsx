@@ -3,6 +3,7 @@
 import { useActionState } from "react";
 import { registerForEventAction } from "@/lib/actions/registrations";
 import { Button } from "@/components/ui/Button";
+import { FormError } from "@/components/ui/FormError";
 import { Input, Select, Textarea, Label, FieldGroup } from "@/components/ui/Field";
 import type { Attendee } from "@/lib/types";
 
@@ -94,7 +95,7 @@ export function RegistrationForm({
       </FieldGroup>
 
       {state?.error && (
-        <p className="mb-4 rounded-lg bg-red-50 px-3 py-2 text-sm text-danger">{state.error}</p>
+        <FormError className="mb-4">{state.error}</FormError>
       )}
 
       <Button type="submit" disabled={pending} className="w-full sm:w-auto">
