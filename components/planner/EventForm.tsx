@@ -4,6 +4,7 @@ import { useActionState, useRef, useState, useTransition } from "react";
 import { createEventAction, updateEventAction, type EventFormState } from "@/lib/actions/events";
 import { generateEventDescription } from "@/lib/ai";
 import { Button } from "@/components/ui/Button";
+import { FormError } from "@/components/ui/FormError";
 import { Input, Select, Textarea, Label, FieldGroup } from "@/components/ui/Field";
 import type { EventRecord, FloorPlan } from "@/lib/types";
 
@@ -116,7 +117,7 @@ export function EventForm({ event, templates }: { event?: EventRecord; templates
             type="button"
             onClick={generateWithAI}
             disabled={aiPending}
-            className="cursor-pointer text-xs font-semibold text-lu-purple-600 hover:underline disabled:opacity-50"
+            className="cursor-pointer rounded text-xs font-semibold text-primary hover:underline focus-visible:ring-2 focus-visible:ring-ring/50 focus-visible:outline-none disabled:opacity-50"
           >
             {aiPending ? "Generating…" : "✨ Generate with AI"}
           </button>
@@ -131,7 +132,7 @@ export function EventForm({ event, templates }: { event?: EventRecord; templates
       </FieldGroup>
 
       {state?.error && (
-        <p className="mb-4 rounded-lg bg-red-50 px-3 py-2 text-sm text-danger">{state.error}</p>
+        <FormError className="mb-4">{state.error}</FormError>
       )}
       {state?.notice && (
         <p className="mb-4 rounded-lg border border-lu-gold-500/30 bg-lu-gold-500/10 px-3 py-2 text-sm text-foreground">
