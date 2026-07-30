@@ -202,7 +202,7 @@ export default async function PlannerEventDetailPage({
       </Card>
 
       <p>
-        <Link href="/planner/events" className="text-sm text-lu-purple-600 hover:underline">
+        <Link href="/planner/events" className="text-sm text-primary hover:underline">
           ← Back to all events
         </Link>
       </p>
